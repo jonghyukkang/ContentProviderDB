@@ -1,49 +1,48 @@
-package kang.contentapp;
+package kang.contentapp.Fragment;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
+
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+import kang.contentapp.ContentDB;
+import kang.contentapp.MyContentProvider;
+import kang.contentapp.Activity.PeopleEdit;
+import kang.contentapp.R;
+
+/**
+ * Created by kangjonghyuk on 2016. 7. 13..
+ */
+public class ContentFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor>
+ {
 
     private SimpleCursorAdapter dataAdapter;
+    private ListView listView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        displayListView();
-
-        Button add = (Button) findViewById(R.id.add);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent peopleEdit = new Intent(getBaseContext(), PeopleEdit.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("mode", "add");
-                peopleEdit.putExtras(bundle);
-                startActivity(peopleEdit);
-            }
-        });
     }
 
+    @Nullable
     @Override
-    protected void onResume() {
-        super.onResume();
-        getLoaderManager().restartLoader(0, null, MainActivity.this);
-    }
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.content_fragment, container, false);
 
-    private void displayListView() {
         String[] columns = new String[]{
                 ContentDB.KEY_NAME,
                 ContentDB.KEY_NAESUN,
@@ -60,9 +59,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 R.id.depart
         };
 
-        dataAdapter = new SimpleCursorAdapter(this, R.layout.people_info, null, columns, to, 0);
-
-        final ListView listView = (ListView) findViewById(R.id.peopleList);
+        dataAdapter = new SimpleCursorAdapter(getContext(), R.layout.people_info, null, columns, to, 0);
+        listView = (ListView) view.findViewById(R.id.peopleList);
         listView.setAdapter(dataAdapter);
         getLoaderManager().initLoader(0, null, this);
 
@@ -74,12 +72,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String peopleNumber =
                         cursor.getString(cursor.getColumnIndexOrThrow(ContentDB.KEY_NUMBER));
 
-                Toast.makeText(getApplicationContext(), peopleNumber, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), peopleNumber, Toast.LENGTH_SHORT).show();
 
                 String rowId =
                         cursor.getString(cursor.getColumnIndexOrThrow(ContentDB.KEY_PEOPLE));
 
-                Intent peopleEdit = new Intent(getBaseContext(), PeopleEdit.class);
+                Intent peopleEdit = new Intent(getContext(), PeopleEdit.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("mode", "update");
                 bundle.putString("rowId", rowId);
@@ -87,6 +85,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(peopleEdit);
             }
         });
+
+        return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -98,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 ContentDB.KEY_NUMBER,
                 ContentDB.KEY_EMAIL,
                 ContentDB.KEY_DEPART};
-        CursorLoader cursorLoader = new CursorLoader(this,
+        CursorLoader cursorLoader = new CursorLoader(getContext(),
                 MyContentProvider.CONTENT_URI, projection, null, null, null);
         return cursorLoader;
     }
@@ -112,5 +123,4 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         dataAdapter.swapCursor(null);
     }
-
 }

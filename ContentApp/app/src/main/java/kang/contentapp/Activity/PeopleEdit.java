@@ -1,4 +1,4 @@
-package kang.contentapp;
+package kang.contentapp.Activity;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import kang.contentapp.ContentDB;
+import kang.contentapp.MyContentProvider;
+import kang.contentapp.R;
 
 /**
  * Created by kangjonghyuk on 2016. 7. 13..
@@ -134,7 +138,6 @@ public class PeopleEdit extends Activity implements View.OnClickListener{
             number.setText(myNumber);
             email.setText(myEmail);
             departList.setSelection(getIndex(departList, myDepart));
-
         }
     }
 

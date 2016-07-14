@@ -18,4 +18,6 @@
         <item>DESIGN</item>
         <item>MANAGE</item>
     </string-array>
+
+    <string name="action_add">Add content</string>
 </resources>
