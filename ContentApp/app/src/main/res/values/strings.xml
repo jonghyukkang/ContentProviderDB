@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ContentApp</string>
+
+    <string name="add_country">Add a Peopple</string>
+    <string name="people_info">People Information</string>
+    <string name="people_name">Name</string>
+    <string name="people_naesun">Naesun</string>
+    <string name="people_email">Email</string>
+    <string name="people_number">Number</string>
+    <string name="save_country">Save</string>
+    <string name="del_country">Delete</string>
+    <string name="choose_depart">Choose Depart</string>
+
+    <string-array name="depart_array">
+        <item>LAB 1</item>
+        <item>LAB 2</item>
+        <item>LAB 3</item>
+        <item>DESIGN</item>
+        <item>MANAGE</item>
+    </string-array>
+</resources>
