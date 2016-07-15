@@ -25,4 +25,5 @@
         app:tabSelectedTextColor="@color/colorWhite"
         app:tabIndicatorColor="@color/colorWhite"/>
 
+
 </LinearLayout>

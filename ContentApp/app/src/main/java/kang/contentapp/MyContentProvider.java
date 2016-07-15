@@ -21,6 +21,7 @@ public class MyContentProvider extends ContentProvider{
     private static final String AUTHORITY = "kang.contentapp";
     public static final Uri CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/peoples");
+
     private static final UriMatcher uriMatcher;
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
