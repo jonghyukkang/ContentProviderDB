@@ -93,6 +93,7 @@ public class ListContractFragment extends Fragment
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
         return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
     }
 
