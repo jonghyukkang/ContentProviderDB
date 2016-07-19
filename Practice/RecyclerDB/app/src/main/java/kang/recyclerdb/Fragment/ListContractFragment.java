@@ -4,11 +4,9 @@ package kang.recyclerdb.Fragment;
  * Created by kangjonghyuk on 2016. 7. 14..
  */
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,7 +17,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.Adapter.ContractCursorAdapter;
@@ -106,4 +103,6 @@ public class ListContractFragment extends Fragment
     public void onLoaderReset(Loader loader) {
         mAdapter.setCursor(null);
     }
+
+
 }

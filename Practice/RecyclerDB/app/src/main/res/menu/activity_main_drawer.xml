@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/labAll"
+            android:title="전체 연락처" />
+        <item
+            android:id="@+id/lab_1"
+            android:title="1연구소" />
+        <item
+            android:id="@+id/lab_2"
+            android:title="2연구소" />
+        <item
+            android:id="@+id/lab_3"
+            android:title="3연구소" />
+        <item
+            android:id="@+id/lab_design"
+            android:title="디자인" />
+        <item
+            android:id="@+id/lab_manage"
+            android:title="경영" />
+    </group>
+</menu>

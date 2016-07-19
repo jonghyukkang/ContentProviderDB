@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import kang.recyclerdb.DB.ContractColumns;
+import kang.recyclerdb.HolderView;
 import kang.recyclerdb.R;
 
-public class ContractCursorAdapter extends RecyclerView.Adapter<ContractCursorAdapter.VH> {
+public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
 
     private Cursor mCursor;
     private OnClickItem mListener;
@@ -22,26 +23,30 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<ContractCursorAd
         mListener = listener;
     }
 
+    public ContractCursorAdapter(){
+
+    }
+
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HolderView onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.people_info, parent, false);
 
-        final VH vh = new VH(v);
+        final HolderView HolderView = new HolderView(v);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = vh.getAdapterPosition();
+                int position = HolderView.getAdapterPosition();
                 mCursor.moveToPosition(position);
                 if (mListener != null) mListener.itemClickListener(mCursor);
             }
         });
 
-        return vh;
+        return HolderView;
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(HolderView holder, int position) {
         mCursor.moveToPosition(position);
         int idx_name = mCursor.getColumnIndex(ContractColumns.NAME);
         int idx_naesun = mCursor.getColumnIndex(ContractColumns.NAESUN);
@@ -61,6 +66,7 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<ContractCursorAd
         holder.mEmail.setText(email);
         holder.mDepart.setText(depart);
     }
+
 
     @Override
     public int getItemCount() {
@@ -92,22 +98,5 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<ContractCursorAd
 
     public interface OnClickItem {
         void itemClickListener(Cursor cursor);
-    }
-
-    public static class VH extends RecyclerView.ViewHolder {
-        public TextView mName;
-        public TextView mNaesun;
-        public TextView mNumber;
-        public TextView mEmail;
-        public TextView mDepart;
-
-        public VH(View v) {
-            super(v);
-            mName = (TextView) v.findViewById(R.id.tvName);
-            mNaesun = (TextView) v.findViewById(R.id.tvNaesun);
-            mNumber = (TextView) v.findViewById(R.id.tvNumber);
-            mEmail = (TextView) v.findViewById(R.id.tvEmail);
-            mDepart = (TextView) v.findViewById(R.id.tvDepart);
-        }
     }
 }
