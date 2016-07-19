@@ -23,10 +23,6 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
         mListener = listener;
     }
 
-    public ContractCursorAdapter(){
-
-    }
-
     @Override
     public HolderView onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
