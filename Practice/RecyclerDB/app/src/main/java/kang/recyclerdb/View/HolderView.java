@@ -1,8 +1,10 @@
-package kang.recyclerdb;
+package kang.recyclerdb.View;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import kang.recyclerdb.R;
 
 /**
  * Created by kangjonghyuk on 2016. 7. 18..

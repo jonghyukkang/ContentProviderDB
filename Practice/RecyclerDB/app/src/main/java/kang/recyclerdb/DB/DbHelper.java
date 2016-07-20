@@ -56,11 +56,11 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '김재민', '777', '01023330305', 'kjm@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '이용현', '707', '0112830931', 'elrobo@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '김성학', '703', '01090536750', 'shkim@maneullab.com','Lab 3');");
-
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS "+ContractColumns.TABLE_NAME);
+        onCreate(db);
     }
 }

@@ -25,7 +25,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import kang.recyclerdb.Const;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.Adapter.ContractCursorAdapter;
 import kang.recyclerdb.DB.DbHelper;
@@ -33,7 +35,7 @@ import kang.recyclerdb.R;
 
 
 public class ListContractFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener, Const {
     private static final int ALL_VIEW = 0;
     private static final int LAB_1 = 1;
     private static final int LAB_2 = 2;
@@ -57,6 +59,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 new Dialog_Fragment().show(getFragmentManager(), "dialog");
             }
         });
+
         mDbHelper = new DbHelper(getContext());
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -89,6 +92,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         super.onActivityCreated(savedInstanceState);
 
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
     }
@@ -99,42 +103,42 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         //Lab_1
         if (id == R.id.lab_1) {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery("select * from Contract where depart = " + "'Lab 1'" + ";", null);
+            Cursor result = db.rawQuery(QUERY_LAB_1, null);
             getLoaderManager().restartLoader(LAB_1, null, this);
             result.close();
 
             //Lab_2
         } else if (id == R.id.lab_2) {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery("select * from Contract where depart = " + "'Lab 2'" + ";", null);
+            Cursor result = db.rawQuery(QUERY_LAB_2, null);
             getLoaderManager().restartLoader(LAB_2, null, this);
             result.close();
 
             //Lab_3
         } else if (id == R.id.lab_3) {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery("select * from Contract where depart = " + "'Lab 3'" + ";", null);
+            Cursor result = db.rawQuery(QUERY_LAB_3, null);
             getLoaderManager().restartLoader(LAB_3, null, this);
             result.close();
 
             //Design
         } else if (id == R.id.lab_design) {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery("select * from Contract where depart = " + "'Design'" + ";", null);
+            Cursor result = db.rawQuery(QUERY_DESIGN, null);
             getLoaderManager().restartLoader(DESIGN, null, this);
             result.close();
 
             //Manage
         } else if (id == R.id.lab_manage) {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery("select * from Contract where depart = " + "'Manage'" + ";", null);
+            Cursor result = db.rawQuery(QUERY_MANAGE, null);
             getLoaderManager().restartLoader(MANAGE, null, this);
             result.close();
 
             //Lab_All
         } else if (id == R.id.labAll) {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery("select * from Contract;", null);
+            Cursor result = db.rawQuery(QUERY_ALL, null);
             getLoaderManager().restartLoader(ALL_VIEW, null, this);
             result.close();
         }
@@ -179,22 +183,28 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         switch (id) {
             case 0:
                 // All_View
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(),
+                        ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
             case 1:
                 // Lab_1
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_1, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(),
+                        ContractColumns.URI_MENSAGENS, null, Lab_1, null, ContractColumns.NAME);
             case 2:
                 // Lab_2
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_2, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(),
+                        ContractColumns.URI_MENSAGENS, null, Lab_2, null, ContractColumns.NAME);
             case 3:
                 // Lab_3
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_3, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(),
+                        ContractColumns.URI_MENSAGENS, null, Lab_3, null, ContractColumns.NAME);
             case 4:
                 // Design
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Design, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(),
+                        ContractColumns.URI_MENSAGENS, null, Design, null, ContractColumns.NAME);
             case 5:
                 // Manage
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Manage, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(),
+                        ContractColumns.URI_MENSAGENS, null, Manage, null, ContractColumns.NAME);
         }
         return null;
     }
