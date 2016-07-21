@@ -4,7 +4,7 @@ package kang.recyclerdb.Fragment;
  * Created by kangjonghyuk on 2016. 7. 14..
  */
 
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import kang.recyclerdb.Const;
 import kang.recyclerdb.DB.ContractColumns;
@@ -52,7 +51,9 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment, container, false);
+        mDbHelper = new DbHelper(getContext());
 
+        // Floating Button을 눌렀을 때  'DialogFragment'띄움
         view.findViewById(R.id.fabAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,16 +61,14 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             }
         });
 
-        mDbHelper = new DbHelper(getContext());
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
-        configureSwipe();
-
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        // 연락처 클릭 시 'DialogFragment ' 띄움
         mAdapter = new ContractCursorAdapter(new ContractCursorAdapter.OnClickItem() {
             @Override
             public void itemClickListener(Cursor cursor) {
@@ -78,7 +77,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 f.show(getFragmentManager(), "dialog");
             }
         });
-
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -94,81 +92,41 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
+   //  NavigationView에서 아이템을 눌렀을 때 각각에 맞게 쿼리하고, Loader 재호출
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //Lab_1
-        if (id == R.id.lab_1) {
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery(QUERY_LAB_1, null);
-            getLoaderManager().restartLoader(LAB_1, null, this);
-            result.close();
+        switch(id){
+            case R.id.lab_1 :
+                getLoaderManager().restartLoader(LAB_1, null, this);
+                break;
 
-            //Lab_2
-        } else if (id == R.id.lab_2) {
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery(QUERY_LAB_2, null);
-            getLoaderManager().restartLoader(LAB_2, null, this);
-            result.close();
+            case R.id.lab_2 :
+                getLoaderManager().restartLoader(LAB_2, null, this);
+                break;
 
-            //Lab_3
-        } else if (id == R.id.lab_3) {
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery(QUERY_LAB_3, null);
-            getLoaderManager().restartLoader(LAB_3, null, this);
-            result.close();
+            case R.id.lab_3 :
+                getLoaderManager().restartLoader(LAB_3, null, this);
+                break;
 
-            //Design
-        } else if (id == R.id.lab_design) {
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery(QUERY_DESIGN, null);
-            getLoaderManager().restartLoader(DESIGN, null, this);
-            result.close();
+            case R.id.lab_design :
+                getLoaderManager().restartLoader(DESIGN, null, this);
+                break;
 
-            //Manage
-        } else if (id == R.id.lab_manage) {
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery(QUERY_MANAGE, null);
-            getLoaderManager().restartLoader(MANAGE, null, this);
-            result.close();
+            case R.id.lab_manage :
+                getLoaderManager().restartLoader(MANAGE, null, this);
+                break;
 
-            //Lab_All
-        } else if (id == R.id.labAll) {
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Cursor result = db.rawQuery(QUERY_ALL, null);
-            getLoaderManager().restartLoader(ALL_VIEW, null, this);
-            result.close();
+            case R.id.labAll :
+                getLoaderManager().restartLoader(ALL_VIEW, null, this);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void configureSwipe() {
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(
-                0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                final int x = viewHolder.getLayoutPosition();
-                Cursor cursor = mAdapter.getCursor();
-                cursor.moveToPosition(x);
-                final long id = cursor.getLong(cursor.getColumnIndex(ContractColumns._ID));
-                getActivity().getContentResolver().delete(
-                        Uri.withAppendedPath(ContractColumns.URI_MENSAGENS, String.valueOf(id)),
-                        null, null);
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -181,36 +139,31 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         String Manage = "depart = " + "'Manage'";
 
         switch (id) {
-            case 0:
+            case 0 :
                 // All_View
-                return new CursorLoader(getActivity(),
-                        ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, null);
             case 1:
                 // Lab_1
-                return new CursorLoader(getActivity(),
-                        ContractColumns.URI_MENSAGENS, null, Lab_1, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_1, null, null);
             case 2:
                 // Lab_2
-                return new CursorLoader(getActivity(),
-                        ContractColumns.URI_MENSAGENS, null, Lab_2, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_2, null, null);
             case 3:
                 // Lab_3
-                return new CursorLoader(getActivity(),
-                        ContractColumns.URI_MENSAGENS, null, Lab_3, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_3, null, null);
             case 4:
                 // Design
-                return new CursorLoader(getActivity(),
-                        ContractColumns.URI_MENSAGENS, null, Design, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Design, null, null);
             case 5:
                 // Manage
-                return new CursorLoader(getActivity(),
-                        ContractColumns.URI_MENSAGENS, null, Manage, null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Manage, null, null);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToFirst();
         mAdapter.setCursor(data);
     }
 
@@ -219,24 +172,3 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         mAdapter.setCursor(null);
     }
 }
-
-
-//} else if (id == R.id.lab_manage) {
-//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//        Cursor result = db.rawQuery("select * from Contract where depart = " + "'Manage'" + ";", null);
-//
-//        result.moveToFirst();
-//
-//        while (!result.isAfterLast()) {
-//        Log.d("TAG", "Manage");
-//        String name = result.getString(1);
-//        String naesun = result.getString(2);
-//        String number = result.getString(3);
-//        String email = result.getString(4);
-//        String depart = result.getString(5);
-//
-//        result.moveToNext();
-//        getLoaderManager().restartLoader(MANAGE, null, this);
-//        Log.d("TAG", "" + name + " / " + naesun + " / " + number + " / " + email + " / " + depart);
-//        }
-//        result.close();

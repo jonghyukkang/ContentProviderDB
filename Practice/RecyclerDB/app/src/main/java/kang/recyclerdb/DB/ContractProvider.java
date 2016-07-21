@@ -28,7 +28,7 @@ public class ContractProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        throw new UnsupportedOperationException("Não implementada.");
+        throw new UnsupportedOperationException("No Implements.");
     }
 
     @Override
@@ -49,15 +49,15 @@ public class ContractProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         if (mUriMatcher.match(uri) == MENSAGENS_POR_ID){
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            int linhasAfetadas = db.delete(ContractColumns.TABLE_NAME,
+            int deleteCount = db.delete(ContractColumns.TABLE_NAME,
                     ContractColumns._ID +" = ?",
                     new String[]{ uri.getLastPathSegment() });
             db.close();
             notifyChanges(uri);
-            return linhasAfetadas;
+            return deleteCount;
 
         } else {
-            throw new UnsupportedOperationException("Uri inválida para exclusão.");
+            throw new UnsupportedOperationException("Uri invalid.");
         }
     }
 
@@ -66,16 +66,16 @@ public class ContractProvider extends ContentProvider {
                       String[] selectionArgs) {
         if (mUriMatcher.match(uri) == MENSAGENS_POR_ID){
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            int linhasAfetadas = db.update(ContractColumns.TABLE_NAME,
+            int updateCount = db.update(ContractColumns.TABLE_NAME,
                     values,
                     ContractColumns._ID +" = ?",
                     new String[]{ uri.getLastPathSegment() });
             db.close();
             notifyChanges(uri);
-            return linhasAfetadas;
+            return updateCount;
 
         } else {
-            throw new UnsupportedOperationException("Uri inválida para exclusão.");
+            throw new UnsupportedOperationException("Uri invalid.");
         }
     }
 

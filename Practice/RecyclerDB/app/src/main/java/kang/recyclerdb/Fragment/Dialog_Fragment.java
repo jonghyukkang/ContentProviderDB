@@ -53,6 +53,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
                 R.array.depart_array, android.R.layout.simple_spinner_dropdown_item);
         mDepartList.setAdapter(adapter);
 
+        // 연락처 편집 부분
         boolean mode = true;
         if (getArguments() != null && getArguments().getLong(EXTRA_ID) != 0){
             id = getArguments().getLong(EXTRA_ID);
@@ -85,6 +86,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
                 .create();
     }
 
+    // Depart Spinner 부분 Index 구하기
     private int getIndex(Spinner spinner, String myString){
         int index = 0;
 
@@ -96,6 +98,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         return index;
     }
 
+    // DialogFragment 등록버튼을 눌렀을 때
     @Override
     public void onClick(DialogInterface dialog, int which) {
 
@@ -129,13 +132,13 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         values.put(ContractColumns.EMAIL, myEmail);
         values.put(ContractColumns.DEPART, myDepart);
 
+        // 편집 모드 일땐 update()
         if (id != 0){
-            Uri uri = Uri.withAppendedPath(
-                    ContractColumns.URI_MENSAGENS, String.valueOf(id));
+            Uri uri = Uri.withAppendedPath(ContractColumns.URI_MENSAGENS, String.valueOf(id));
             getContext().getContentResolver().update(uri, values, null, null);
         } else {
-            getContext().getContentResolver().insert(
-                    ContractColumns.URI_MENSAGENS, values);
+            // 첫 등록일땐 insert()
+            getContext().getContentResolver().insert(ContractColumns.URI_MENSAGENS, values);
         }
     }
 

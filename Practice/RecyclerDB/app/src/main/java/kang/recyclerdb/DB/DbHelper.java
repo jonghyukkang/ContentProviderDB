@@ -13,7 +13,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE "+ ContractColumns.TABLE_NAME+" ("+
-                ContractColumns._ID +" INTEGER NOT NULL PRIMARY KEY, " +
+                ContractColumns._ID +" INTEGER PRIMARY KEY, " +
                 ContractColumns.NAME +" TEXT NOT NULL, " +
                 ContractColumns.NAESUN +" TEXT NOT NULL, " +
                 ContractColumns.NUMBER +" TEXT NOT NULL, " +

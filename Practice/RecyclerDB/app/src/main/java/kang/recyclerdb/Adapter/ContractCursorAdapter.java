@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 .inflate(R.layout.people_info, parent, false);
 
         final ImageButton btn_call = (ImageButton) v.findViewById(R.id.btnCall);
+
         final HolderView HolderView = new HolderView(v);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,10 +100,10 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 int idx_id = mCursor.getColumnIndex(ContractColumns._ID);
                 return mCursor.getLong(idx_id);
             } else {
-                return 0;
+                return -1;
             }
         } else {
-            return 0;
+            return -1;
         }
     }
 
