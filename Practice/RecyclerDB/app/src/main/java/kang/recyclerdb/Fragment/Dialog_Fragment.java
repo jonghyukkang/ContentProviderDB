@@ -3,6 +3,7 @@ package kang.recyclerdb.Fragment;
 /**
  * Created by kangjonghyuk on 2016. 7. 14..
  */
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import kang.recyclerdb.Activity.InformationActivity;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.R;
 
@@ -136,6 +138,9 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         if (id != 0){
             Uri uri = Uri.withAppendedPath(ContractColumns.URI_MENSAGENS, String.valueOf(id));
             getContext().getContentResolver().update(uri, values, null, null);
+
+            InformationActivity informationActivity = (InformationActivity) getActivity();
+            informationActivity.onUserSelectValue(myName, myNaesun, myNumber, myEmail, myDepart);
         } else {
             // 첫 등록일땐 insert()
             getContext().getContentResolver().insert(ContractColumns.URI_MENSAGENS, values);

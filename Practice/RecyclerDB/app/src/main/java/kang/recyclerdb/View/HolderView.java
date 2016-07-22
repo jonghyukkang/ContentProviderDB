@@ -18,6 +18,7 @@ public class HolderView extends RecyclerView.ViewHolder {
         super(v);
         mName = (TextView) v.findViewById(R.id.tvName);
         mImageView = (ImageView) v.findViewById(R.id.img_depart);
+
     }
 }
 

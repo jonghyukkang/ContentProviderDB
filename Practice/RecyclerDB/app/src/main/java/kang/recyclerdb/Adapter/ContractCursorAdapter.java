@@ -71,7 +71,7 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 String email_address = "mailto: " + mCursor.getString(idx_email);
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
                 emailIntent.setData(Uri.parse(email_address));
-                v.getContext().startActivity(Intent.createChooser(emailIntent, "Send feedback"));
+                v.getContext().startActivity(Intent.createChooser(emailIntent, "Send Email"));
             }
         });
         return HolderView;

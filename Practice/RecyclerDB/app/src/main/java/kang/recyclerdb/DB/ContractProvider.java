@@ -106,6 +106,7 @@ public class ContractProvider extends ContentProvider {
     private void notifyChanges(Uri uri){
         if (getContext() != null && getContext().getContentResolver() != null){
             getContext().getContentResolver().notifyChange(uri, null);
+
         }
     }
 }

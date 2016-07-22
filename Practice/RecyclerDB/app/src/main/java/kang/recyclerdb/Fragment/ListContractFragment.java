@@ -22,7 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import kang.recyclerdb.Activity.TestActivity;
+import kang.recyclerdb.Activity.InformationActivity;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.Adapter.ContractCursorAdapter;
 import kang.recyclerdb.DB.DbHelper;
@@ -63,15 +63,31 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // 연락처 클릭 시 'DialogFragment ' 띄움
+        // 연락처 클릭 시 개인정보 띄움
         mAdapter = new ContractCursorAdapter(new ContractCursorAdapter.OnClickItem() {
             @Override
             public void itemClickListener(Cursor cursor) {
+                int idx_id = cursor.getColumnIndex(ContractColumns._ID);
                 int idx_name = cursor.getColumnIndex(ContractColumns.NAME);
-                String name = cursor.getString(idx_name);
+                int idx_naesun = cursor.getColumnIndex(ContractColumns.NAESUN);
+                int idx_number = cursor.getColumnIndex(ContractColumns.NUMBER);
+                int idx_email = cursor.getColumnIndex(ContractColumns.EMAIL);
+                int idx_depart = cursor.getColumnIndex(ContractColumns.DEPART);
 
-                Intent intent = new Intent(getContext(), TestActivity.class);
+                String id = cursor.getString(idx_id);
+                String name = cursor.getString(idx_name);
+                String naesun = cursor.getString(idx_naesun);
+                String number = cursor.getString(idx_number);
+                String email = cursor.getString(idx_email);
+                String depart = cursor.getString(idx_depart);
+
+                Intent intent = new Intent(getContext(), InformationActivity.class);
+                intent.putExtra("ID", id);
                 intent.putExtra("NAME", name);
+                intent.putExtra("NAESUN", naesun);
+                intent.putExtra("NUMBER", number);
+                intent.putExtra("EMAIL", email);
+                intent.putExtra("DEPART", depart);
 
                 startActivity(intent);
             }
@@ -143,22 +159,22 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         switch (id) {
             case 0 :
                 // All_View
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, null);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
             case 1:
                 // Lab_1
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_1, null, null);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_1, null, ContractColumns.NAME);
             case 2:
                 // Lab_2
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_2, null, null);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_2, null, ContractColumns.NAME);
             case 3:
                 // Lab_3
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_3, null, null);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_3, null, ContractColumns.NAME);
             case 4:
                 // Design
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Design, null, null);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Design, null, ContractColumns.NAME);
             case 5:
                 // Manage
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Manage, null, null);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Manage, null, ContractColumns.NAME);
         }
         return null;
     }
