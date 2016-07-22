@@ -3,27 +3,27 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/labAll"
-            android:icon="@drawable/ic_contacts_black_24dp"
+            android:icon="@drawable/navi_icon_all"
             android:title="전체 연락처" />
         <item
             android:id="@+id/lab_1"
-            android:icon="@drawable/ic_looks_one_black_24dp"
+            android:icon="@drawable/navi_icon_1"
             android:title="1연구소" />
         <item
             android:id="@+id/lab_2"
-            android:icon="@drawable/ic_looks_two_black_24dp"
+            android:icon="@drawable/navi_icon_2"
             android:title="2연구소" />
         <item
             android:id="@+id/lab_3"
-            android:icon="@drawable/ic_looks_3_black_24dp"
+            android:icon="@drawable/navi_icon_3"
             android:title="3연구소" />
         <item
             android:id="@+id/lab_design"
-            android:icon="@drawable/ic_filter_vintage_black_24dp"
+            android:icon="@drawable/navi_icon_design"
             android:title="디자인" />
         <item
             android:id="@+id/lab_manage"
-            android:icon="@drawable/ic_domain_black_24dp"
+            android:icon="@drawable/navi_icon_manage"
             android:title="경영" />
     </group>
 </menu>

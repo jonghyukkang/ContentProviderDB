@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 .inflate(R.layout.people_info, parent, false);
 
         final ImageButton btn_call = (ImageButton) v.findViewById(R.id.btnCall);
+        final ImageButton btn_email = (ImageButton) v.findViewById(R.id.btnEmail);
 
         final HolderView HolderView = new HolderView(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +61,19 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 v.getContext().startActivity(intent);
             }
         });
+
+        btn_email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = HolderView.getAdapterPosition();
+                mCursor.moveToPosition(position);
+                int idx_email = mCursor.getColumnIndex(ContractColumns.EMAIL);
+                String email_address = "mailto: " + mCursor.getString(idx_email);
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse(email_address));
+                v.getContext().startActivity(Intent.createChooser(emailIntent, "Send feedback"));
+            }
+        });
         return HolderView;
     }
 
@@ -68,22 +81,24 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
     public void onBindViewHolder(HolderView holder, int position) {
         mCursor.moveToPosition(position);
         int idx_name = mCursor.getColumnIndex(ContractColumns.NAME);
-        int idx_naesun = mCursor.getColumnIndex(ContractColumns.NAESUN);
-        int idx_number = mCursor.getColumnIndex(ContractColumns.NUMBER);
-        int idx_email = mCursor.getColumnIndex(ContractColumns.EMAIL);
         int idx_depart = mCursor.getColumnIndex(ContractColumns.DEPART);
 
         String name = mCursor.getString(idx_name);
-        String naesun = mCursor.getString(idx_naesun);
-        String number = mCursor.getString(idx_number);
-        String email = mCursor.getString(idx_email);
         String depart = mCursor.getString(idx_depart);
 
         holder.mName.setText(name);
-        holder.mNaesun.setText(naesun);
-        holder.mNumber.setText(number);
-        holder.mEmail.setText(email);
-        holder.mDepart.setText(depart);
+
+        if(depart.equals("Lab 1")){
+            holder.mImageView.setImageResource(R.drawable.list_icon_1);
+        } else if(depart.equals("Lab 2")){
+            holder.mImageView.setImageResource(R.drawable.list_icon_2);
+        } else if(depart.equals("Lab 3")){
+            holder.mImageView.setImageResource(R.drawable.list_icon_3);
+        } else if(depart.equals("Manage")){
+            holder.mImageView.setImageResource(R.drawable.list_icon_m);
+        } else if(depart.equals("Design")){
+            holder.mImageView.setImageResource(R.drawable.list_icon_d);
+        }
     }
 
     @Override
