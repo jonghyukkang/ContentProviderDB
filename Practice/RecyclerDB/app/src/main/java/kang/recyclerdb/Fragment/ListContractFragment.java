@@ -6,8 +6,6 @@ package kang.recyclerdb.Fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -19,22 +17,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import kang.recyclerdb.Const;
+import kang.recyclerdb.Activity.TestActivity;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.Adapter.ContractCursorAdapter;
 import kang.recyclerdb.DB.DbHelper;
 import kang.recyclerdb.R;
 
 
-public class ListContractFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        NavigationView.OnNavigationItemSelectedListener, Const {
+public class ListContractFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
     private static final int ALL_VIEW = 0;
     private static final int LAB_1 = 1;
     private static final int LAB_2 = 2;
@@ -61,7 +57,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             }
         });
 
-
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
@@ -72,9 +67,13 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         mAdapter = new ContractCursorAdapter(new ContractCursorAdapter.OnClickItem() {
             @Override
             public void itemClickListener(Cursor cursor) {
-                long id = cursor.getLong(cursor.getColumnIndex(ContractColumns._ID));
-                Dialog_Fragment f = Dialog_Fragment.newInstance(id);
-                f.show(getFragmentManager(), "dialog");
+                int idx_name = cursor.getColumnIndex(ContractColumns.NAME);
+                String name = cursor.getString(idx_name);
+
+                Intent intent = new Intent(getContext(), TestActivity.class);
+                intent.putExtra("NAME", name);
+
+                startActivity(intent);
             }
         });
         mAdapter.setHasStableIds(true);
@@ -90,43 +89,46 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         super.onActivityCreated(savedInstanceState);
 
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
-        navigationView.setItemIconTintList(null);
-        navigationView.setNavigationItemSelectedListener(this);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
     }
 
-   //  NavigationView에서 아이템을 눌렀을 때 각각에 맞게 쿼리하고, Loader 재호출
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.lab_1:
+                        getLoaderManager().restartLoader(LAB_1, null, ListContractFragment.this);
+                        break;
 
-        switch(id){
-            case R.id.lab_1 :
-                getLoaderManager().restartLoader(LAB_1, null, this);
-                break;
+                    case R.id.lab_2:
+                        getLoaderManager().restartLoader(LAB_2, null, ListContractFragment.this);
+                        break;
 
-            case R.id.lab_2 :
-                getLoaderManager().restartLoader(LAB_2, null, this);
-                break;
+                    case R.id.lab_3:
+                        getLoaderManager().restartLoader(LAB_3, null, ListContractFragment.this);
+                        break;
 
-            case R.id.lab_3 :
-                getLoaderManager().restartLoader(LAB_3, null, this);
-                break;
+                    case R.id.lab_design:
+                        getLoaderManager().restartLoader(DESIGN, null, ListContractFragment.this);
+                        break;
 
-            case R.id.lab_design :
-                getLoaderManager().restartLoader(DESIGN, null, this);
-                break;
+                    case R.id.lab_manage:
+                        getLoaderManager().restartLoader(MANAGE, null, ListContractFragment.this);
+                        break;
 
-            case R.id.lab_manage :
-                getLoaderManager().restartLoader(MANAGE, null, this);
-                break;
-
-            case R.id.labAll :
-                getLoaderManager().restartLoader(ALL_VIEW, null, this);
-                break;
-        }
-
-        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+                    case R.id.labAll:
+                        getLoaderManager().restartLoader(ALL_VIEW, null, ListContractFragment.this);
+                        break;
+                }
+                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -172,3 +174,8 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         mAdapter.setCursor(null);
     }
 }
+
+//
+//    long id = cursor.getLong(cursor.getColumnIndex(ContractColumns.NAME));
+//    Dialog_Fragment f = Dialog_Fragment.newInstance(id);
+//f.show(getFragmentManager(), "dialog");

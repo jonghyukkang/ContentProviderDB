@@ -61,7 +61,6 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 v.getContext().startActivity(intent);
             }
         });
-
         return HolderView;
     }
 
@@ -87,7 +86,6 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
         holder.mDepart.setText(depart);
     }
 
-
     @Override
     public int getItemCount() {
         return (mCursor != null) ? mCursor.getCount() : 0;
@@ -100,10 +98,10 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
                 int idx_id = mCursor.getColumnIndex(ContractColumns._ID);
                 return mCursor.getLong(idx_id);
             } else {
-                return -1;
+                return 0;
             }
         } else {
-            return -1;
+            return 0;
         }
     }
 

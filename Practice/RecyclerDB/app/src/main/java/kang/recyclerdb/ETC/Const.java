@@ -1,4 +1,4 @@
-package kang.recyclerdb;
+package kang.recyclerdb.ETC;
 
 /**
  * Created by kangjonghyuk on 2016. 7. 19..

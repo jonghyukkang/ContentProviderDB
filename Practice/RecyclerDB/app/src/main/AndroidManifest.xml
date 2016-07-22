@@ -21,6 +21,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".Activity.TestActivity"
+            android:parentActivityName=".Activity.MainActivity"/>
+
         <provider
             android:name=".DB.ContractProvider"
             android:enabled="true"
