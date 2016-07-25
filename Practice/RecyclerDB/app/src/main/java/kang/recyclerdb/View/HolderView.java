@@ -11,14 +11,15 @@ import kang.recyclerdb.R;
  * Created by kangjonghyuk on 2016. 7. 18..
  */
 public class HolderView extends RecyclerView.ViewHolder {
+    public TextView mCompany;
     public TextView mName;
-    public ImageView mImageView;
+    public TextView mDepart;
 
     public HolderView(View v) {
         super(v);
+        mCompany = (TextView) v.findViewById(R.id.tvCompany);
         mName = (TextView) v.findViewById(R.id.tvName);
-        mImageView = (ImageView) v.findViewById(R.id.img_depart);
-
+        mDepart = (TextView) v.findViewById(R.id.tvDepart);
     }
 }
 

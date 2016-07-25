@@ -80,25 +80,17 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
     @Override
     public void onBindViewHolder(HolderView holder, int position) {
         mCursor.moveToPosition(position);
+        int idx_company = mCursor.getColumnIndex(ContractColumns.COMPANYNAME);
         int idx_name = mCursor.getColumnIndex(ContractColumns.NAME);
         int idx_depart = mCursor.getColumnIndex(ContractColumns.DEPART);
 
+        String company = mCursor.getString(idx_company);
         String name = mCursor.getString(idx_name);
         String depart = mCursor.getString(idx_depart);
 
+        holder.mCompany.setText(company);
         holder.mName.setText(name);
-
-        if(depart.equals("Lab 1")){
-            holder.mImageView.setImageResource(R.drawable.list_icon_1);
-        } else if(depart.equals("Lab 2")){
-            holder.mImageView.setImageResource(R.drawable.list_icon_2);
-        } else if(depart.equals("Lab 3")){
-            holder.mImageView.setImageResource(R.drawable.list_icon_3);
-        } else if(depart.equals("Manage")){
-            holder.mImageView.setImageResource(R.drawable.list_icon_m);
-        } else if(depart.equals("Design")){
-            holder.mImageView.setImageResource(R.drawable.list_icon_d);
-        }
+        holder.mDepart.setText(depart);
     }
 
     @Override

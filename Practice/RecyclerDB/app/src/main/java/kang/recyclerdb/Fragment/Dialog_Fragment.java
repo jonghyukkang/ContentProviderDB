@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kang.recyclerdb.Activity.InformationActivity;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.R;
@@ -30,12 +33,12 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     private EditText mEditNumber;
     private EditText mEditEmail;
     private Spinner mDepartList;
+    private Spinner mCompanyList;
     public long id;
 
     public static Dialog_Fragment newInstance(long id){
         Bundle bundle = new Bundle();
         bundle.putLong(EXTRA_ID, id);
-
         Dialog_Fragment dialogFragment = new Dialog_Fragment();
         dialogFragment.setArguments(bundle);
         return dialogFragment;
@@ -45,15 +48,31 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_fragment, null);
 
+        mCompanyList = (Spinner) view.findViewById(R.id.companyList);
         mEditName = (EditText)view.findViewById(R.id.editName);
         mEditNaesun = (EditText)view.findViewById(R.id.editNaesun);
         mEditNumber = (EditText)view.findViewById(R.id.editNumber);
         mEditEmail = (EditText)view.findViewById(R.id.editEmail);
         mDepartList = (Spinner) view.findViewById(R.id.departList);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.depart_array, android.R.layout.simple_spinner_dropdown_item);
-        mDepartList.setAdapter(adapter);
+        List company_list = new ArrayList<>();
+        company_list.add("Maneullab");
+
+
+        ArrayAdapter companyAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, company_list);
+        companyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCompanyList.setAdapter(companyAdapter);
+
+        List depart_list = new ArrayList<>();
+        depart_list.add("Lab 1");
+        depart_list.add("Lab 2");
+        depart_list.add("Lab 3");
+        depart_list.add("Design");
+        depart_list.add("Manage");
+
+        ArrayAdapter departAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item, depart_list);
+        departAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mDepartList.setAdapter(departAdapter);
 
         // 연락처 편집 부분
         boolean mode = true;
@@ -65,17 +84,20 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
             Cursor cursor = getActivity().getContentResolver().query( uri, null, null, null, null);
             if (cursor.moveToNext()) {
                 mode = false;
+                String myCompany = cursor.getString(cursor.getColumnIndex(ContractColumns.COMPANYNAME));
                 String myName = cursor.getString(cursor.getColumnIndex(ContractColumns.NAME));
                 String myNaesun = cursor.getString(cursor.getColumnIndex(ContractColumns.NAESUN));
                 String myNumber = cursor.getString(cursor.getColumnIndex(ContractColumns.NUMBER));
                 String myEmail = cursor.getString(cursor.getColumnIndex(ContractColumns.EMAIL));
                 String myDepart = cursor.getString(cursor.getColumnIndex(ContractColumns.DEPART));
 
+                mCompanyList.setSelection(getIndex(mCompanyList, myCompany));
                 mEditName.setText(myName);
                 mEditNaesun.setText(myNaesun);
                 mEditNumber.setText(myNumber);
                 mEditEmail.setText(myEmail);
                 mDepartList.setSelection(getIndex(mDepartList, myDepart));
+
             }
             cursor.close();
         }
@@ -103,7 +125,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     // DialogFragment 등록버튼을 눌렀을 때
     @Override
     public void onClick(DialogInterface dialog, int which) {
-
+        String myCompany = mCompanyList.getSelectedItem().toString();
         String myName = mEditName.getText().toString();
         String myNaesun = mEditNaesun.getText().toString();
         String myNumber = mEditNumber.getText().toString();
@@ -128,6 +150,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         }
 
         ContentValues values = new ContentValues();
+        values.put(ContractColumns.COMPANYNAME, myCompany);
         values.put(ContractColumns.NAME, myName);
         values.put(ContractColumns.NAESUN, myNaesun);
         values.put(ContractColumns.NUMBER, myNumber);
@@ -140,7 +163,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
             getContext().getContentResolver().update(uri, values, null, null);
 
             InformationActivity informationActivity = (InformationActivity) getActivity();
-            informationActivity.onUserSelectValue(myName, myNaesun, myNumber, myEmail, myDepart);
+            informationActivity.onUserSelectValue(myCompany, myName, myNaesun, myNumber, myEmail, myDepart);
         } else {
             // 첫 등록일땐 insert()
             getContext().getContentResolver().insert(ContractColumns.URI_MENSAGENS, values);

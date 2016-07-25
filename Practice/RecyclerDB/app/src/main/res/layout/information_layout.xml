@@ -74,10 +74,29 @@
                         android:background="#957bbd"/>
 
                     <TextView
-                        android:id="@+id/textView1"
+                        android:id="@+id/textView7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tvName"
+                        android:layout_marginTop="6dp"
+                        android:text="Company.   "
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/tvCompany"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/textView7"
+                        android:layout_alignBaseline="@+id/textView7"
+                        android:text="Maneullab"
+                        android:textSize="18sp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textView7"
                         android:layout_marginTop="6dp"
                         android:text="Depart.   "
                         android:textAppearance="?android:attr/textAppearanceSmall" />

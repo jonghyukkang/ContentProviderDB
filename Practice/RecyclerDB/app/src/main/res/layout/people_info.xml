@@ -18,24 +18,58 @@
         android:elevation="8dp"
         android:padding="8dp">
 
-        <ImageView
-            android:id="@+id/img_depart"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/list_icon_1"/>
-
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:text="강종혁"
-            android:layout_toRightOf="@+id/img_depart"
             android:layout_centerVertical="true"
             android:textSize="20sp"
             android:textColor="#957bbd"/>
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tvName"
+            android:layout_toEndOf="@+id/tvName"
+            android:layout_centerVertical="true"
+            android:textSize="20sp"
+            android:textColor="#957bbd"
+            android:text=" | "/>
+
+        <TextView
+            android:id="@+id/tvCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/text1"
+            android:layout_centerVertical="true"
+            android:text="Maneullab"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#957bbd" />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tvCompany"
+            android:layout_centerVertical="true"
+            android:textSize="20sp"
+            android:textColor="#957bbd"
+            android:text=" | "/>
+
+        <TextView
+            android:id="@+id/tvDepart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/text2"
+            android:layout_centerVertical="true"
+            android:text="Lab 1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#957bbd" />
+
+
 
         <ImageButton
             android:id="@+id/btnEmail"

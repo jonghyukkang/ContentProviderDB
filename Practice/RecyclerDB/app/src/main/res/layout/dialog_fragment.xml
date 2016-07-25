@@ -18,6 +18,33 @@
             android:layout_weight="1">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/editCompanyname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/companyname"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+            android:id="@+id/companyList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -2,6 +2,7 @@
     <string name="app_name">ManeullabContracts</string>
     <string name="action_reset">전체 불러오기</string>
 
+    <string name="companyname">회사명</string>
     <string name="name">이름</string>
     <string name="naesun">내선</string>
     <string name="number">전화번호</string>
@@ -13,14 +14,6 @@
 
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-
-    <string-array name="depart_array">
-        <item>Lab 1</item>
-        <item>Lab 2</item>
-        <item>Lab 3</item>
-        <item>Design</item>
-        <item>Manage</item>
-    </string-array>
 
     <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
     cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian

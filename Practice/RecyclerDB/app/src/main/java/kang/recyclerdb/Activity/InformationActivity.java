@@ -38,8 +38,8 @@ public class InformationActivity extends AppCompatActivity {
     private TextView tvNumber;
     private TextView tvEmail;
     private TextView tvDepart;
-    private ImageButton btnEmail, btnCall;
-    private String sName, sNaesun, sNumber, sEmail, sDepart, sId;
+    private TextView tvCompany;
+    private String sName, sNaesun, sNumber, sEmail, sDepart, sId, sCompany;
     public static Context mContext;
     public android.support.design.widget.FloatingActionButton btnFab;
     private CollapsingToolbarLayout collapsingToolbar;
@@ -49,17 +49,17 @@ public class InformationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.information_layout);
         mContext = this;
+        tvCompany = (TextView) findViewById(R.id.tvCompany);
         tvName = (TextView) findViewById(R.id.tvName);
         tvNaesun = (TextView) findViewById(R.id.tvNaesun);
         tvNumber = (TextView) findViewById(R.id.tvNumber);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvDepart = (TextView) findViewById(R.id.tvDepart);
-        btnEmail = (ImageButton) findViewById(R.id.btnEmail);
-        btnCall = (ImageButton) findViewById(R.id.btnCall);
         btnFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.btnfab);
 
         Intent intent = getIntent();
         sId = intent.getStringExtra("ID");
+        sCompany = intent.getStringExtra("COMPANY");
         sName = intent.getStringExtra("NAME");
         sNaesun = intent.getStringExtra("NAESUN");
         sNumber = intent.getStringExtra("NUMBER");
@@ -73,6 +73,7 @@ public class InformationActivity extends AppCompatActivity {
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(sName);
 
+        tvCompany.setText(sCompany);
         tvName.setText(sName);
         tvNaesun.setText(sNaesun);
         tvNumber.setText(sNumber.substring(0, 3) + " - " + sNumber.substring(3, 7) + " - " + sNumber.substring(7, 11));
@@ -145,7 +146,8 @@ public class InformationActivity extends AppCompatActivity {
         }
     }
 
-    public void onUserSelectValue(String name, String naesun, String number, String email, String depart) {
+    public void onUserSelectValue(String company, String name, String naesun, String number, String email, String depart) {
+        tvCompany.setText(company);
         tvName.setText(name);
         tvNaesun.setText(naesun);
         tvNumber.setText(number.substring(0, 3) + " - " + number.substring(3, 7) + " - " + number.substring(7, 11));
