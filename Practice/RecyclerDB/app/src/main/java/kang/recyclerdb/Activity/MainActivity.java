@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.setDrawerListener(toggle);
         toggle.syncState();
+
     }
 
     @Override

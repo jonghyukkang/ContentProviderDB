@@ -103,7 +103,7 @@ public class InformationActivity extends AppCompatActivity {
                 getContentResolver().delete(
                         Uri.withAppendedPath(ContractColumns.URI_MENSAGENS, String.valueOf(sId)),
                         null, null);
-                Toast.makeText(getApplicationContext(),"삭제 되었습니다", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "삭제 되었습니다", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

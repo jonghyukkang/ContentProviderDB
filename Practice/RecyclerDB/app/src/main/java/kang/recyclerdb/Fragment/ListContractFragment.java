@@ -4,21 +4,22 @@ package kang.recyclerdb.Fragment;
  * Created by kangjonghyuk on 2016. 7. 14..
  */
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +27,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -56,12 +55,11 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
     private LinearLayoutManager mLayoutManager;
     private DbHelper mDbHelper;
 
-
     private DrawerLayout mDrawerLayout;
     ExpandableListAdapter mMenuAdapter;
     ExpandableListView expandableList;
-    List<ExpandedMenuModel> listDataHeader;
-    HashMap<ExpandedMenuModel, List<String>> listDataChild;
+    List<ExpandedMenuModel> listDataHeader = new ArrayList<ExpandedMenuModel>();
+    HashMap<ExpandedMenuModel, List<String>> listDataChild = new HashMap<ExpandedMenuModel, List<String>>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,7 +71,9 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         view.findViewById(R.id.fabAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Dialog_Fragment().show(getFragmentManager(), "dialog");
+                DialogFragment dialogFragment = new Dialog_Fragment();
+                dialogFragment.setTargetFragment(ListContractFragment.this, 1);
+                dialogFragment.show(getFragmentManager(), "dialog");
             }
         });
 
@@ -111,7 +111,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 intent.putExtra("EMAIL", email);
                 intent.putExtra("DEPART", depart);
 
-
                 startActivity(intent);
             }
         });
@@ -143,106 +142,160 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             }
         });
 
+        Button btn_groupAdd = (Button) getActivity().findViewById(R.id.btn_groupAdd);
+        btn_groupAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialogFragment = new DialogFrag_GroupAdd();
+                dialogFragment.setTargetFragment(ListContractFragment.this, 1);
+                dialogFragment.show(getFragmentManager(), "dialog");
+            }
+        });
+
+        Button btn_groupDel = (Button) getActivity().findViewById(R.id.btn_groupDel);
+        btn_groupDel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialogFragment = new DialogFrag_GroupDel();
+                dialogFragment.setTargetFragment(ListContractFragment.this, 1);
+                dialogFragment.show(getFragmentManager(), "dialog");
+            }
+        });
+
         prepareListData();
 
         mMenuAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild, expandableList);
 
         expandableList.setAdapter(mMenuAdapter);
 
-        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                if (groupPosition == 0) {
-                    switch (childPosition) {
-                        case 0:
-                            getLoaderManager().restartLoader(ALL_VIEW, null, ListContractFragment.this);
-                            mDrawerLayout.closeDrawers();
-                            break;
-
-                        case 1:
-                            getLoaderManager().restartLoader(LAB_1, null, ListContractFragment.this);
-                            mDrawerLayout.closeDrawers();
-                            break;
-
-                        case 2:
-                            getLoaderManager().restartLoader(LAB_2, null, ListContractFragment.this);
-                            mDrawerLayout.closeDrawers();
-                            break;
-
-                        case 3:
-                            getLoaderManager().restartLoader(LAB_3, null, ListContractFragment.this);
-                            mDrawerLayout.closeDrawers();
-                            break;
-
-                        case 4:
-                            getLoaderManager().restartLoader(DESIGN, null, ListContractFragment.this);
-                            mDrawerLayout.closeDrawers();
-                            break;
-
-                        case 5:
-                            getLoaderManager().restartLoader(MANAGE, null, ListContractFragment.this);
-                            mDrawerLayout.closeDrawers();
-                            break;
-                    }
-                }
-                Log.d("TAG", "" + groupPosition + " / " + childPosition);
-                return false;
-            }
-        });
+//        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//
+//            @Override
+//            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+//                if (groupPosition == 0) {
+//                    switch (childPosition) {
+//                        case 0:
+//                            getLoaderManager().restartLoader(ALL_VIEW, null, ListContractFragment.this);
+//                            mDrawerLayout.closeDrawers();
+//                            break;
+//                        case 1:
+//                            getLoaderManager().restartLoader(LAB_1, null, ListContractFragment.this);
+//                            mDrawerLayout.closeDrawers();
+//                            break;
+//                        case 2:
+//                            getLoaderManager().restartLoader(LAB_2, null, ListContractFragment.this);
+//                            mDrawerLayout.closeDrawers();
+//                            break;
+//                        case 3:
+//                            getLoaderManager().restartLoader(LAB_3, null, ListContractFragment.this);
+//                            mDrawerLayout.closeDrawers();
+//                            break;
+//                        case 4:
+//                            getLoaderManager().restartLoader(DESIGN, null, ListContractFragment.this);
+//                            mDrawerLayout.closeDrawers();
+//                            break;
+//                        case 5:
+//                            getLoaderManager().restartLoader(MANAGE, null, ListContractFragment.this);
+//                            mDrawerLayout.closeDrawers();
+//                            break;
+//                    }
+//                }
+//                return false;
+//            }
+//        });
 
         expandableList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-                Log.d("DEBUG", "heading clicked");
-                return false;
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
+                if (groupPosition == 1) {
+                    Toast.makeText(getContext(), "hihihi", Toast.LENGTH_SHORT).show();
+                }
+                return true;
             }
         });
     }
 
-    private void prepareListData() {
-        listDataHeader = new ArrayList<ExpandedMenuModel>();
-        listDataChild = new HashMap<ExpandedMenuModel, List<String>>();
-        final int count = 1;
-
-        Button btn_groupAdd = (Button) getActivity().findViewById(R.id.btn_groupAdd);
-        btn_groupAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ExpandedMenuModel item3 = new ExpandedMenuModel();
-                item3.setIconName("heading3");
-                listDataHeader.add(item3);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
                 mMenuAdapter.notifyDataSetChanged();
-
+                listDataHeader.clear();
+                prepareListData();
             }
-        });
-
-        ExpandedMenuModel item1 = new ExpandedMenuModel();
-        item1.setIconName("Maneullab");
-        listDataHeader.add(item1);
-
-        ExpandedMenuModel item2 = new ExpandedMenuModel();
-        item2.setIconName("heading2");
-        listDataHeader.add(item2);
-
-        List<String> heading1 = new ArrayList<>();
-        heading1.add("전체 연락처");
-        heading1.add("1연구소");
-        heading1.add("2연구소");
-        heading1.add("3연구소");
-        heading1.add("디자인");
-        heading1.add("경영지원");
-
-        List<String> heading2 = new ArrayList<String>();
-        heading2.add("Submenu of item 2");
-        heading2.add("Submenu of item 2");
-        heading2.add("Submenu of item 2");
-        heading2.add("Add submenu 2");
-
-        listDataChild.put(listDataHeader.get(0), heading1);
-        listDataChild.put(listDataHeader.get(1), heading2);
+        }
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
+//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+//        String sql = "select * from Contract;";
+//        Cursor results = db.rawQuery(sql, null);
+//
+//        results.moveToFirst();
+//        while(!results.isAfterLast()){
+//            int id = results.getInt(0);
+//            String voca = results.getString(1);
+//            Log.d("TAG", ""+ id + " / " + voca);
+//            results.moveToNext();
+//        }
+//        results.close();
+//
+//        Cursor c = db.rawQuery(
+//                "SELECT name FROM sqlite_master WHERE type='table'", null);
+//        ArrayList<String[]> result = new ArrayList<String[]>();
+//        int i = 0;
+//        result.add(c.getColumnNames());
+//        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+//            String[] temp = new String[c.getColumnCount()];
+//            for (i = 0; i < temp.length; i++) {
+//                temp[i] = c.getString(i);
+//                System.out.println("TABLE - "+temp[i]);
+//
+//
+//                Cursor c1 = db.rawQuery(
+//                        "SELECT * FROM "+temp[i], null);
+//                c1.moveToFirst();
+//                String[] COLUMNS = c1.getColumnNames();
+//                for(int j=0;j<COLUMNS.length;j++){
+//                    c1.move(j);
+//                    System.out.println("    COLUMN - "+COLUMNS[j]);
+//                }
+//            }
+//            result.add(temp);
+//            Log.d("TAG", ""+ result);
+//        }
+
+    public void prepareListData() {
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        for (c.moveToPosition(1); !c.isAfterLast(); c.moveToNext()) {
+            String[] temp = new String[c.getColumnCount()];
+            for (int i = 0; i < temp.length; i++) {
+                temp[i] = c.getString(i);
+                System.out.println("TABLE - " + temp[i]);
+                ExpandedMenuModel item = new ExpandedMenuModel();
+                item.setIconName(temp[i]);
+                listDataHeader.add(item);
+            }
+        } db.close();
+    }
+
+//        ExpandedMenuModel item1 = new ExpandedMenuModel();
+//        item1.setIconName("maneullab");
+//        listDataHeader.add(item1);
+
+//        List<String> heading1 = new ArrayList<>();
+//        heading1.add("전체 연락처");
+//        heading1.add("1연구소");
+//        heading1.add("2연구소");
+//        heading1.add("3연구소");
+//        heading1.add("디자인");
+//        heading1.add("경영지원");
+//
+//        listDataChild.put(listDataHeader.get(0), heading1);
+
+    private void setupDrawerContent(final NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {

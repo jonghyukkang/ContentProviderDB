@@ -10,7 +10,7 @@ public interface ContractColumns extends BaseColumns {
     Uri URI_MENSAGENS = Uri.withAppendedPath(BASE_URI, "msgs");
 
     // TableName = "Contract"
-    String TABLE_NAME = "Contract";
+    String TABLE_NAME = "Maneullab";
 
     // "Contract" Table's fields
     String COMPANYNAME = "companyname";

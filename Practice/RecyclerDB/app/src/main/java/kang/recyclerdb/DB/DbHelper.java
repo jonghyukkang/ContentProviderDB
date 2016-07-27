@@ -32,7 +32,7 @@ public class DbHelper extends SQLiteOpenHelper {
         //Design
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '이원식', '400', '01041385883', 'neolee@maneullab.com','Design');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '조선정', '401', '01052930025', 'jsjleo@maneullab.com','Design');");
-        //Lab_1 ( Software)
+        //Lab_1 ( Software )
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '이진수', '500', '01037340029', 'js@maneullab.com','Lab 1');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '길근호', '503', '01089652307', 'ghkil15@maneullab.com','Lab 1');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '이준수', '504', '01087661244', 'june@maneullab.com','Lab 1');");
@@ -40,7 +40,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '신광호', '506', '01091631429', 'hshin@maneullab.com','Lab 1');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '김승연', '507', '01057977411', 'sosory@maneullab.com','Lab 1');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '강종혁', '511', '01055033471', 'kangjh@maneullab.com','Lab 1');");
-        //Lab_1 ( Hardware)
+        //Lab_1 ( Hardware )
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '구권철', '502', '01080069744', 'gupiro@maneullab.com','Lab 1');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '이미영', '508', '01036877747', 'speckle@maneullab.com','Lab 1');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '양주열', '509', '01055299058', 'yangjy@maneullab.com','Lab 1');");
@@ -55,7 +55,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '한현석', '605', '01047336841', 'hhs1120@maneullab.com','Lab 2');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '최시온', '601', '01037579310', 'sion@maneullab.com','Lab 2');");
         //Lab_3
-        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '정국면', '700', '01096561530', 'hitman@maneullab.com','Lab 3');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '정국면', '700', '01096561530',  'hitman@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '정정원', '702', '01035005514', 'j21@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '김현민', '701', '01091480784', 'skhm50@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '김재민', '777', '01023330305', 'kjm@maneullab.com','Lab 3');");
@@ -66,6 +66,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+ContractColumns.TABLE_NAME);
+
         onCreate(db);
 
     }

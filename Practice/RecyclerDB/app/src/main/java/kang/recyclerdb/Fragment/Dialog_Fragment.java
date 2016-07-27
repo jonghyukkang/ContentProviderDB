@@ -3,40 +3,46 @@ package kang.recyclerdb.Fragment;
 /**
  * Created by kangjonghyuk on 2016. 7. 14..
  */
-import android.app.Activity;
+
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import kang.recyclerdb.Activity.InformationActivity;
 import kang.recyclerdb.DB.ContractColumns;
+import kang.recyclerdb.DB.DbHelper;
 import kang.recyclerdb.R;
 
 public class Dialog_Fragment extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final String EXTRA_ID = "id";
+    private Spinner mCompanyList;
     private EditText mEditName;
     private EditText mEditNaesun;
     private EditText mEditNumber;
     private EditText mEditEmail;
-    private Spinner mDepartList;
-    private Spinner mCompanyList;
+    private EditText mEditDepart;
+    private DbHelper mDbHelper;
+    ArrayList<String> companyList = new ArrayList<String>();
     public long id;
 
-    public static Dialog_Fragment newInstance(long id){
+    public static Dialog_Fragment newInstance(long id) {
         Bundle bundle = new Bundle();
         bundle.putLong(EXTRA_ID, id);
         Dialog_Fragment dialogFragment = new Dialog_Fragment();
@@ -46,42 +52,26 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_fragment, null);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_frag_member_add, null);
 
-        mCompanyList = (Spinner) view.findViewById(R.id.companyList);
-        mEditName = (EditText)view.findViewById(R.id.editName);
-        mEditNaesun = (EditText)view.findViewById(R.id.editNaesun);
-        mEditNumber = (EditText)view.findViewById(R.id.editNumber);
-        mEditEmail = (EditText)view.findViewById(R.id.editEmail);
-        mDepartList = (Spinner) view.findViewById(R.id.departList);
+        mCompanyList = (Spinner) view.findViewById(R.id.spinner_company);
+        mEditName = (EditText) view.findViewById(R.id.editName);
+        mEditNaesun = (EditText) view.findViewById(R.id.editNaesun);
+        mEditNumber = (EditText) view.findViewById(R.id.editNumber);
+        mEditEmail = (EditText) view.findViewById(R.id.editEmail);
+        mEditDepart = (EditText) view.findViewById(R.id.editDepart);
+        mDbHelper = new DbHelper(getContext());
 
-        List company_list = new ArrayList<>();
-        company_list.add("Maneullab");
-
-
-        ArrayAdapter companyAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, company_list);
-        companyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mCompanyList.setAdapter(companyAdapter);
-
-        List depart_list = new ArrayList<>();
-        depart_list.add("Lab 1");
-        depart_list.add("Lab 2");
-        depart_list.add("Lab 3");
-        depart_list.add("Design");
-        depart_list.add("Manage");
-
-        ArrayAdapter departAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item, depart_list);
-        departAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mDepartList.setAdapter(departAdapter);
+        Spinner_Redraw();
 
         // 연락처 편집 부분
         boolean mode = true;
-        if (getArguments() != null && getArguments().getLong(EXTRA_ID) != 0){
+        if (getArguments() != null && getArguments().getLong(EXTRA_ID) != 0) {
             id = getArguments().getLong(EXTRA_ID);
             Uri uri = Uri.withAppendedPath(
                     ContractColumns.URI_MENSAGENS, String.valueOf(id));
 
-            Cursor cursor = getActivity().getContentResolver().query( uri, null, null, null, null);
+            Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToNext()) {
                 mode = false;
                 String myCompany = cursor.getString(cursor.getColumnIndex(ContractColumns.COMPANYNAME));
@@ -96,7 +86,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
                 mEditNaesun.setText(myNaesun);
                 mEditNumber.setText(myNumber);
                 mEditEmail.setText(myEmail);
-                mDepartList.setSelection(getIndex(mDepartList, myDepart));
+                mEditDepart.setText(myDepart);
 
             }
             cursor.close();
@@ -110,17 +100,67 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
                 .create();
     }
 
-    // Depart Spinner 부분 Index 구하기
-    private int getIndex(Spinner spinner, String myString){
+    private int getIndex(Spinner spinner, String myString) {
         int index = 0;
-
-        for(int i=0; i<spinner.getCount(); i++){
-            if(spinner.getItemAtPosition(i).equals(myString)){
-                index= i;
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).equals(myString)) {
+                index = i;
             }
         }
         return index;
     }
+
+    public void Spinner_Redraw(){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        for (c.moveToPosition(1); !c.isAfterLast(); c.moveToNext()) {
+            String[] temp = new String[c.getColumnCount()];
+            for (int i = 0; i < temp.length; i++) {
+                temp[i] = c.getString(i);
+                companyList.add(temp[i]);
+            }
+        }
+        companyList.add("직접 입력");
+        db.close();
+        c.close();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, companyList);
+        mCompanyList.setAdapter(adapter);
+        mCompanyList.setOnItemSelectedListener(mItemSelected);
+    }
+
+    AdapterView.OnItemSelectedListener mItemSelected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+            int inputPosition = mCompanyList.getCount();
+            if (mCompanyList.getSelectedItemPosition() == (inputPosition-1)) {
+               Context mContext = getContext();
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View layout = inflater.inflate(R.layout.input_dialog, null);
+                final EditText mEdit_inputCompany = (EditText) layout.findViewById(R.id.input_company);
+
+                new AlertDialog.Builder(getContext())
+                        .setTitle("회사 추가")
+                        .setView(layout)
+                        .setNegativeButton("입력", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                String inputCompany = mEdit_inputCompany.getText().toString();
+                                companyList.set(position+1, inputCompany);
+                                companyList.add("직접 입력");
+                            }
+                        })
+                        .setPositiveButton("취소", null)
+                        .show();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     // DialogFragment 등록버튼을 눌렀을 때
     @Override
@@ -130,21 +170,21 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         String myNaesun = mEditNaesun.getText().toString();
         String myNumber = mEditNumber.getText().toString();
         String myEmail = mEditEmail.getText().toString();
-        String myDepart = mDepartList.getSelectedItem().toString();
+        String myDepart = mEditDepart.getText().toString();
 
-        if(myName.trim().equalsIgnoreCase("")){
+        if (myName.trim().equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "Please Enter people name", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(myNaesun.trim().equalsIgnoreCase("")){
+        if (myNaesun.trim().equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "Please Enter people naesun", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(myNumber.trim().equalsIgnoreCase("")){
+        if (myNumber.trim().equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "Please Enter people number", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(myEmail.trim().equalsIgnoreCase("")){
+        if (myEmail.trim().equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "Please Enter people email", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -158,7 +198,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         values.put(ContractColumns.DEPART, myDepart);
 
         // 편집 모드 일땐 update()
-        if (id != 0){
+        if (id != 0) {
             Uri uri = Uri.withAppendedPath(ContractColumns.URI_MENSAGENS, String.valueOf(id));
             getContext().getContentResolver().update(uri, values, null, null);
 
@@ -169,5 +209,4 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
             getContext().getContentResolver().insert(ContractColumns.URI_MENSAGENS, values);
         }
     }
-
 }

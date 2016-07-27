@@ -22,16 +22,34 @@
             android:id="@+id/navigationmenu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="40dp"
             android:layout_marginTop="160dp"
-            android:background="@android:color/white"/>
+            android:background="@android:color/white" />
 
-        <Button
-            android:id="@+id/btn_groupAdd"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/colorPurpleLess"
-            android:text="그룹 추가하기"/>
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/btn_groupAdd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:background="@color/colorPurpleLess"
+                android:text="그룹 추가" />
+
+            <Button
+                android:id="@+id/btn_groupDel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:background="@color/colorPurpleLess"
+                android:text="그룹 삭제" />
+
+        </LinearLayout>
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
