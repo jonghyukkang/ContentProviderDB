@@ -13,4 +13,5 @@ public class ExpandedMenuModel {
     public void setIconName(String iconName){
         this.iconName = iconName;
     }
+
 }

@@ -4,12 +4,15 @@ package kang.recyclerdb.Fragment;
  * Created by kangjonghyuk on 2016. 7. 14..
  */
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -23,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kang.recyclerdb.Activity.InformationActivity;
 import kang.recyclerdb.DB.ContractColumns;
@@ -132,27 +136,11 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     AdapterView.OnItemSelectedListener mItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
-            int inputPosition = mCompanyList.getCount();
+            final int inputPosition = mCompanyList.getCount();
             if (mCompanyList.getSelectedItemPosition() == (inputPosition-1)) {
-               Context mContext = getContext();
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View layout = inflater.inflate(R.layout.input_dialog, null);
-                final EditText mEdit_inputCompany = (EditText) layout.findViewById(R.id.input_company);
-
-                new AlertDialog.Builder(getContext())
-                        .setTitle("회사 추가")
-                        .setView(layout)
-                        .setNegativeButton("입력", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                String inputCompany = mEdit_inputCompany.getText().toString();
-                                companyList.set(position+1, inputCompany);
-                                companyList.add("직접 입력");
-                            }
-                        })
-                        .setPositiveButton("취소", null)
-                        .show();
+                DialogFragment dialogFragment = new DialogFrag_GroupAdd();
+                dialogFragment.setTargetFragment(Dialog_Fragment.this, 2);
+                dialogFragment.show(getFragmentManager(), "dialog");
             }
         }
 
@@ -161,6 +149,17 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                companyList.clear();
+                mCompanyList.invalidate();
+                Spinner_Redraw();
+            }
+        }
+    }
 
     // DialogFragment 등록버튼을 눌렀을 때
     @Override
@@ -207,6 +206,13 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         } else {
             // 첫 등록일땐 insert()
             getContext().getContentResolver().insert(ContractColumns.URI_MENSAGENS, values);
+//            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+//         db.insert(myCompany, null, values);
         }
     }
 }
+//    Uri BASE_URI = Uri.parse("content://"+ AUTHORITY);
+//    Uri URI_MENSAGENS = Uri.withAppendedPath(BASE_URI, "msgs");
+
+//    Uri URI_TABLE = Uri.withAppendedPath(ContractColumns.BASE_URI, myCompany);
+//    getContext().getContentResolver().insert(URI_TABLE, values);

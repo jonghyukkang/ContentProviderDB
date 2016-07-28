@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -17,9 +18,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.AutoScrollHelper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -168,50 +171,51 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 
         expandableList.setAdapter(mMenuAdapter);
 
-//        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//
-//            @Override
-//            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-//                if (groupPosition == 0) {
+        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+//                if (groupPosition == 1) {
 //                    switch (childPosition) {
 //                        case 0:
-//                            getLoaderManager().restartLoader(ALL_VIEW, null, ListContractFragment.this);
-//                            mDrawerLayout.closeDrawers();
-//                            break;
-//                        case 1:
 //                            getLoaderManager().restartLoader(LAB_1, null, ListContractFragment.this);
 //                            mDrawerLayout.closeDrawers();
 //                            break;
-//                        case 2:
+//                        case 1:
 //                            getLoaderManager().restartLoader(LAB_2, null, ListContractFragment.this);
 //                            mDrawerLayout.closeDrawers();
 //                            break;
-//                        case 3:
+//                        case 2:
 //                            getLoaderManager().restartLoader(LAB_3, null, ListContractFragment.this);
 //                            mDrawerLayout.closeDrawers();
 //                            break;
-//                        case 4:
+//                        case 3:
 //                            getLoaderManager().restartLoader(DESIGN, null, ListContractFragment.this);
 //                            mDrawerLayout.closeDrawers();
 //                            break;
-//                        case 5:
+//                        case 4:
 //                            getLoaderManager().restartLoader(MANAGE, null, ListContractFragment.this);
 //                            mDrawerLayout.closeDrawers();
 //                            break;
 //                    }
 //                }
-//                return false;
-//            }
-//        });
+                return false;
+            }
+        });
 
         expandableList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                int gPosition = groupPosition;
 
-                if (groupPosition == 1) {
-                    Toast.makeText(getContext(), "hihihi", Toast.LENGTH_SHORT).show();
-                }
-                return true;
+                String str = listDataHeader.get(gPosition).getIconName();
+                Bundle bundle = new Bundle();
+                bundle.putString("STR", str);
+
+                getLoaderManager().restartLoader(gPosition, bundle, ListContractFragment.this);
+                mDrawerLayout.closeDrawers();
+
+                return false;
             }
         });
     }
@@ -226,6 +230,75 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             }
         }
     }
+
+    public void prepareListData() {
+        ExpandedMenuModel itemAll = new ExpandedMenuModel();
+        itemAll.setIconName("전체 연락처");
+        listDataHeader.add(itemAll);
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        for (c.moveToPosition(1); !c.isAfterLast(); c.moveToNext()) {
+            String[] temp = new String[c.getColumnCount()];
+            for (int i = 0; i < temp.length; i++) {
+                temp[i] = c.getString(i);
+                System.out.println("TABLE - " + temp[i]);
+                ExpandedMenuModel item = new ExpandedMenuModel();
+                item.setIconName(temp[i]);
+                listDataHeader.add(item);
+            }
+        }
+        db.close();
+
+//        List<String> heading1 = new ArrayList<>();
+//        heading1.add("1연구소");
+//        heading1.add("2연구소");
+//        heading1.add("3연구소");
+//        heading1.add("디자인");
+//        heading1.add("경영지원");
+//
+//        listDataChild.put(listDataHeader.get(1), heading1);
+    }
+
+    private void setupDrawerContent(final NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
+
+        if (args == null || id == 0) {
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
+        }
+        String str = args.getString("STR");
+        if (args != null) {
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'"+str+"'", null, ContractColumns.NAME);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToFirst();
+        mAdapter.setCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.setCursor(null);
+    }
+}
+
 
 //        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 //        String sql = "select * from Contract;";
@@ -264,88 +337,3 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 //            result.add(temp);
 //            Log.d("TAG", ""+ result);
 //        }
-
-    public void prepareListData() {
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-        for (c.moveToPosition(1); !c.isAfterLast(); c.moveToNext()) {
-            String[] temp = new String[c.getColumnCount()];
-            for (int i = 0; i < temp.length; i++) {
-                temp[i] = c.getString(i);
-                System.out.println("TABLE - " + temp[i]);
-                ExpandedMenuModel item = new ExpandedMenuModel();
-                item.setIconName(temp[i]);
-                listDataHeader.add(item);
-            }
-        } db.close();
-    }
-
-//        ExpandedMenuModel item1 = new ExpandedMenuModel();
-//        item1.setIconName("maneullab");
-//        listDataHeader.add(item1);
-
-//        List<String> heading1 = new ArrayList<>();
-//        heading1.add("전체 연락처");
-//        heading1.add("1연구소");
-//        heading1.add("2연구소");
-//        heading1.add("3연구소");
-//        heading1.add("디자인");
-//        heading1.add("경영지원");
-//
-//        listDataChild.put(listDataHeader.get(0), heading1);
-
-    private void setupDrawerContent(final NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
-        String Lab_1 = "depart = " + "'Lab 1'";
-        String Lab_2 = "depart = " + "'Lab 2'";
-        String Lab_3 = "depart = " + "'Lab 3'";
-        String Design = "depart = " + "'Design'";
-        String Manage = "depart = " + "'Manage'";
-
-        switch (id) {
-            case 0:
-                // All_View
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
-            case 1:
-                // Lab_1
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_1, null, ContractColumns.NAME);
-            case 2:
-                // Lab_2
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_2, null, ContractColumns.NAME);
-            case 3:
-                // Lab_3
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Lab_3, null, ContractColumns.NAME);
-            case 4:
-                // Design
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Design, null, ContractColumns.NAME);
-            case 5:
-                // Manage
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, Manage, null, ContractColumns.NAME);
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        data.moveToFirst();
-        mAdapter.setCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.setCursor(null);
-    }
-}

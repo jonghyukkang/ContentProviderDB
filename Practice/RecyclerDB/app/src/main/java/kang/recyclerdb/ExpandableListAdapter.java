@@ -3,6 +3,7 @@ package kang.recyclerdb;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.view.menu.ExpandedMenuView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,9 +41,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int groupPosition) {
         int childCount = 0;
-//        if(groupPosition != 2) {
-//            childCount = this.mListDataChild.get(this.mListDataHeader.get(groupPosition)).size();
-//        }
+        try {
+            if (groupPosition != 2) {
+                childCount = this.mListDataChild.get(this.mListDataHeader.get(groupPosition)).size();
+            }
+        }catch(NullPointerException e){ Log.d("ExpandableListAdapter", "List.size() null"); }
         return childCount;
     }
 

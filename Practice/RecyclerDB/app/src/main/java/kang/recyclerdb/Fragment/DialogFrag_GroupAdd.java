@@ -43,6 +43,7 @@ public class DialogFrag_GroupAdd extends DialogFragment implements DialogInterfa
     public void onClick(DialogInterface dialog, int which) {
         String myCompany = mEditCompanyGroup.getText().toString();
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
         db.execSQL("CREATE TABLE "+ myCompany +" (" +
                 "_ID INTEGER PRIMARY KEY, "+
                 "companyname TEXT NOT NULL, "+
