@@ -56,7 +56,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
     private RecyclerView mRecyclerView;
     private ContractCursorAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    private DbHelper mDbHelper;
+    public DbHelper mDbHelper;
 
     private DrawerLayout mDrawerLayout;
     ExpandableListAdapter mMenuAdapter;
@@ -75,7 +75,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onClick(View v) {
                 DialogFragment dialogFragment = new Dialog_Fragment();
-                dialogFragment.setTargetFragment(ListContractFragment.this, 1);
+                dialogFragment.setTargetFragment(ListContractFragment.this, 3);
                 dialogFragment.show(getFragmentManager(), "dialog");
             }
         });
@@ -166,39 +166,26 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         });
 
         prepareListData();
-
         mMenuAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild, expandableList);
-
         expandableList.setAdapter(mMenuAdapter);
 
         expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-//                if (groupPosition == 1) {
-//                    switch (childPosition) {
-//                        case 0:
-//                            getLoaderManager().restartLoader(LAB_1, null, ListContractFragment.this);
-//                            mDrawerLayout.closeDrawers();
-//                            break;
-//                        case 1:
-//                            getLoaderManager().restartLoader(LAB_2, null, ListContractFragment.this);
-//                            mDrawerLayout.closeDrawers();
-//                            break;
-//                        case 2:
-//                            getLoaderManager().restartLoader(LAB_3, null, ListContractFragment.this);
-//                            mDrawerLayout.closeDrawers();
-//                            break;
-//                        case 3:
-//                            getLoaderManager().restartLoader(DESIGN, null, ListContractFragment.this);
-//                            mDrawerLayout.closeDrawers();
-//                            break;
-//                        case 4:
-//                            getLoaderManager().restartLoader(MANAGE, null, ListContractFragment.this);
-//                            mDrawerLayout.closeDrawers();
-//                            break;
-//                    }
-//                }
+                int gPosition = groupPosition;
+                int cPosition = childPosition;
+
+                String company = listDataHeader.get(gPosition).getIconName();
+                List depart = listDataChild.get(listDataHeader.get(gPosition));
+
+                Bundle bundle = new Bundle();
+                bundle.putString("COMPANY", company);
+                bundle.putString("DEPART", (String) depart.get(cPosition));
+
+                getLoaderManager().restartLoader(cPosition, bundle, ListContractFragment.this);
+                mDrawerLayout.closeDrawers();
+
                 return false;
             }
         });
@@ -208,13 +195,10 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 int gPosition = groupPosition;
 
-                String str = listDataHeader.get(gPosition).getIconName();
-                Bundle bundle = new Bundle();
-                bundle.putString("STR", str);
-
-                getLoaderManager().restartLoader(gPosition, bundle, ListContractFragment.this);
-                mDrawerLayout.closeDrawers();
-
+                if (gPosition == 0) {
+                    getLoaderManager().restartLoader(1000, null, ListContractFragment.this);
+                    mDrawerLayout.closeDrawers();
+                }
                 return false;
             }
         });
@@ -222,7 +206,17 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 그룹 추가시 Navigationview 리셋
         if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                mMenuAdapter.notifyDataSetChanged();
+                listDataHeader.clear();
+                prepareListData();
+                getLoaderManager().restartLoader(ALL_VIEW, null, this);
+            }
+        }
+
+        if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
                 mMenuAdapter.notifyDataSetChanged();
                 listDataHeader.clear();
@@ -237,27 +231,39 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         listDataHeader.add(itemAll);
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-        for (c.moveToPosition(1); !c.isAfterLast(); c.moveToNext()) {
-            String[] temp = new String[c.getColumnCount()];
-            for (int i = 0; i < temp.length; i++) {
-                temp[i] = c.getString(i);
-                System.out.println("TABLE - " + temp[i]);
-                ExpandedMenuModel item = new ExpandedMenuModel();
-                item.setIconName(temp[i]);
-                listDataHeader.add(item);
-            }
-        }
-        db.close();
+        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
+        Cursor results = db.rawQuery(sql, null);
+        int i=0;
 
-//        List<String> heading1 = new ArrayList<>();
-//        heading1.add("1연구소");
-//        heading1.add("2연구소");
-//        heading1.add("3연구소");
-//        heading1.add("디자인");
-//        heading1.add("경영지원");
-//
-//        listDataChild.put(listDataHeader.get(1), heading1);
+        results.moveToPosition(1);
+        while (!results.isAfterLast()) {
+            String tables = results.getString(0);
+
+            ExpandedMenuModel item = new ExpandedMenuModel();
+            item.setIconName(tables);
+            listDataHeader.add(item);
+
+            ArrayList<String> result = new ArrayList<>();
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + tables + "'", null);
+            c1.moveToFirst();
+            int num = c1.getCount();
+            for (int j = 0; j < num; j++) {
+                int idx_depart = c1.getColumnIndex(ContractColumns.DEPART);
+                String str = c1.getString(idx_depart);
+                result.add(str);
+                c1.moveToNext();
+                if (c1.isAfterLast()) {
+                    break;
+                }
+            }
+            c1.close();
+            listDataChild.put(listDataHeader.get(i+1), result);
+            i++;
+
+            results.moveToNext();
+        }
+        results.close();
+
     }
 
     private void setupDrawerContent(final NavigationView navigationView) {
@@ -275,15 +281,14 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
-
-        if (args == null || id == 0) {
-            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
+        if (args == null || id == 1000) {
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.COMPANYNAME);
         }
-        String str = args.getString("STR");
+        String company = args.getString("COMPANY");
+        String depart = args.getString("DEPART");
         if (args != null) {
-            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'"+str+"'", null, ContractColumns.NAME);
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'", null, ContractColumns.COMPANYNAME);
         }
-
         return null;
     }
 
@@ -298,9 +303,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         mAdapter.setCursor(null);
     }
 }
-
-
-//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 //        String sql = "select * from Contract;";
 //        Cursor results = db.rawQuery(sql, null);
 //
@@ -312,7 +314,8 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 //            results.moveToNext();
 //        }
 //        results.close();
-//
+////        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
 //        Cursor c = db.rawQuery(
 //                "SELECT name FROM sqlite_master WHERE type='table'", null);
 //        ArrayList<String[]> result = new ArrayList<String[]>();
@@ -326,7 +329,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 //
 //
 //                Cursor c1 = db.rawQuery(
-//                        "SELECT * FROM "+temp[i], null);
+//                        "SELECT depart FROM "+temp[i], null);
 //                c1.moveToFirst();
 //                String[] COLUMNS = c1.getColumnNames();
 //                for(int j=0;j<COLUMNS.length;j++){

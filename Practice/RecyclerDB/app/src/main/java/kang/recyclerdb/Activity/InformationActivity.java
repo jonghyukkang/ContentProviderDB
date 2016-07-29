@@ -33,6 +33,7 @@ import kang.recyclerdb.R;
  */
 public class InformationActivity extends AppCompatActivity {
 
+    private static final String Maneullab = "Maneullab";
     private TextView tvName;
     private TextView tvNaesun;
     private TextView tvNumber;
@@ -72,6 +73,13 @@ public class InformationActivity extends AppCompatActivity {
 
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(sName);
+
+        ImageView img_maneullabLogo = (ImageView)findViewById(R.id.img_maneullabLogo);
+        if(sCompany.equals(Maneullab)){
+            img_maneullabLogo.setImageResource(R.drawable.maneullab_logo);
+        } else {
+            img_maneullabLogo.setImageResource(R.drawable.icon_guest);
+        }
 
         tvCompany.setText(sCompany);
         tvName.setText(sName);

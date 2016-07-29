@@ -41,6 +41,10 @@
                 android:background="@color/colorPurpleLess"
                 android:text="그룹 추가" />
 
+            <View
+                android:layout_width="1dp"
+                android:layout_height="3dp" />
+
             <Button
                 android:id="@+id/btn_groupDel"
                 android:layout_width="match_parent"

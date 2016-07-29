@@ -28,7 +28,6 @@ public class DialogFrag_GroupAdd extends DialogFragment implements DialogInterfa
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_frag_group_add, null);
 
-
         mEditCompanyGroup = (EditText)view.findViewById(R.id.editCompanyGroup);
         mDbHelper = new DbHelper(getContext());
         return new AlertDialog.Builder(getActivity())

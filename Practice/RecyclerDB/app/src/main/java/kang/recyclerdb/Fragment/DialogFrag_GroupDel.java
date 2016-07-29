@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -12,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
 
+import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.DB.DbHelper;
 import kang.recyclerdb.R;
 
@@ -43,6 +46,8 @@ public class DialogFrag_GroupDel extends DialogFragment implements DialogInterfa
         String myCompany = mEditCompanyGroup.getText().toString();
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS "+myCompany);
+        String sql = "delete from "+ContractColumns.TABLE_NAME+" where companyname = "+"'"+myCompany+"'";
+        db.execSQL(sql);
         db.close();
 
         Intent intent = new Intent();

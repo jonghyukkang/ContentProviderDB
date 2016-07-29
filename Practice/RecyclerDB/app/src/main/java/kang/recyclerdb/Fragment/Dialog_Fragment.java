@@ -128,7 +128,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         db.close();
         c.close();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, companyList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, companyList);
         mCompanyList.setAdapter(adapter);
         mCompanyList.setOnItemSelectedListener(mItemSelected);
     }
@@ -206,13 +206,10 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         } else {
             // 첫 등록일땐 insert()
             getContext().getContentResolver().insert(ContractColumns.URI_MENSAGENS, values);
-//            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//         db.insert(myCompany, null, values);
+
+            Intent intent = new Intent();
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
         }
     }
 }
-//    Uri BASE_URI = Uri.parse("content://"+ AUTHORITY);
-//    Uri URI_MENSAGENS = Uri.withAppendedPath(BASE_URI, "msgs");
 
-//    Uri URI_TABLE = Uri.withAppendedPath(ContractColumns.BASE_URI, myCompany);
-//    getContext().getContentResolver().insert(URI_TABLE, values);
