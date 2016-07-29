@@ -22,11 +22,13 @@ import android.support.v4.widget.AutoScrollHelper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -202,6 +204,36 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 return false;
             }
         });
+
+        expandableList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+                    int childPosition = ExpandableListView.getPackedPositionChild(id);
+
+                    String groupName = listDataHeader.get(groupPosition).getIconName();
+
+                    List childList = listDataChild.get(listDataHeader.get(groupPosition));
+                    String childName = (String) childList.get(childPosition);
+
+                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                    String sql = "delete from "+ContractColumns.TABLE_NAME+" where companyname = "+"'"+groupName+"'"+" AND depart = "+ "'"+childName+"'";
+                    db.execSQL(sql);
+                    db.close();
+
+                    listDataChild.clear();
+                    listDataHeader.clear();
+                    prepareListData();
+
+                    expandableList.collapseGroup(groupPosition);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -282,12 +314,14 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
         if (args == null || id == 1000) {
-            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.COMPANYNAME);
+            getActivity().setTitle("전체 연락처");
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
         }
         String company = args.getString("COMPANY");
         String depart = args.getString("DEPART");
         if (args != null) {
-            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'", null, ContractColumns.COMPANYNAME);
+            getActivity().setTitle(company + "   |   " + depart);
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'", null, ContractColumns.NAME);
         }
         return null;
     }

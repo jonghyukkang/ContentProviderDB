@@ -56,6 +56,7 @@ public class InformationActivity extends AppCompatActivity {
         tvNumber = (TextView) findViewById(R.id.tvNumber);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvDepart = (TextView) findViewById(R.id.tvDepart);
+        ImageView img_maneullabLogo = (ImageView)findViewById(R.id.img_maneullabLogo);
         btnFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.btnfab);
 
         Intent intent = getIntent();
@@ -74,11 +75,11 @@ public class InformationActivity extends AppCompatActivity {
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(sName);
 
-        ImageView img_maneullabLogo = (ImageView)findViewById(R.id.img_maneullabLogo);
         if(sCompany.equals(Maneullab)){
             img_maneullabLogo.setImageResource(R.drawable.maneullab_logo);
         } else {
             img_maneullabLogo.setImageResource(R.drawable.icon_guest);
+            img_maneullabLogo.setPadding(0, 0, 40, 0);
         }
 
         tvCompany.setText(sCompany);

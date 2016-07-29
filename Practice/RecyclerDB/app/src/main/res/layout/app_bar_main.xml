@@ -25,12 +25,6 @@
                 android:background="@color/colorPurple"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPurple" />
-
         </android.support.design.widget.AppBarLayout>
 
         <fragment

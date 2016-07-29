@@ -37,6 +37,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
     private static final String EXTRA_ID = "id";
     private Spinner mCompanyList;
+    private Spinner mDepartList;
     private EditText mEditName;
     private EditText mEditNaesun;
     private EditText mEditNumber;
@@ -44,6 +45,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     private EditText mEditDepart;
     private DbHelper mDbHelper;
     ArrayList<String> companyList = new ArrayList<String>();
+//    ArrayList<String> departList = new ArrayList<String>();
     public long id;
 
     public static Dialog_Fragment newInstance(long id) {
@@ -59,6 +61,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_frag_member_add, null);
 
         mCompanyList = (Spinner) view.findViewById(R.id.spinner_company);
+        mDepartList = (Spinner) view.findViewById(R.id.spinner_depart);
         mEditName = (EditText) view.findViewById(R.id.editName);
         mEditNaesun = (EditText) view.findViewById(R.id.editNaesun);
         mEditNumber = (EditText) view.findViewById(R.id.editNumber);
@@ -130,10 +133,30 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, companyList);
         mCompanyList.setAdapter(adapter);
-        mCompanyList.setOnItemSelectedListener(mItemSelected);
+        mCompanyList.setOnItemSelectedListener(cSpinnerSelected);
     }
 
-    AdapterView.OnItemSelectedListener mItemSelected = new AdapterView.OnItemSelectedListener() {
+    public void Spinner_Depart(String companyName){
+        ArrayList<String> departList = new ArrayList<String>();
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT DISTINCT depart FROM "+ ContractColumns.TABLE_NAME +" where companyname = "+"'"+companyName+"'", null);
+        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+            String[] temp = new String[c.getColumnCount()];
+            for (int i = 0; i< temp.length; i++){
+                temp[i] = c.getString(i);
+                departList.add(temp[i]);
+            }
+        }
+        departList.add("직접 입력");
+        db.close();
+        c.close();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, departList);
+        mDepartList.setAdapter(adapter);
+        mDepartList.setOnItemSelectedListener(dSpinnerSelected);
+    }
+
+    AdapterView.OnItemSelectedListener cSpinnerSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
             final int inputPosition = mCompanyList.getCount();
@@ -141,6 +164,28 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
                 DialogFragment dialogFragment = new DialogFrag_GroupAdd();
                 dialogFragment.setTargetFragment(Dialog_Fragment.this, 2);
                 dialogFragment.show(getFragmentManager(), "dialog");
+            }
+
+            if(mCompanyList.getSelectedItemPosition() == position){
+                String str = companyList.get(position);
+                Spinner_Depart(str);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    AdapterView.OnItemSelectedListener dSpinnerSelected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            final int inputPosition = mDepartList.getCount();
+            if(mDepartList.getSelectedItemPosition() == (inputPosition-1)){
+                mEditDepart.setEnabled(true);
+            } else {
+                mEditDepart.setEnabled(false);
             }
         }
 
@@ -164,12 +209,17 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     // DialogFragment 등록버튼을 눌렀을 때
     @Override
     public void onClick(DialogInterface dialog, int which) {
+        String myDepart;
+        if(mEditDepart.isEnabled()==true){
+            myDepart = mEditDepart.getText().toString();
+        } else {
+            myDepart = mDepartList.getSelectedItem().toString();
+        }
         String myCompany = mCompanyList.getSelectedItem().toString();
         String myName = mEditName.getText().toString();
         String myNaesun = mEditNaesun.getText().toString();
         String myNumber = mEditNumber.getText().toString();
         String myEmail = mEditEmail.getText().toString();
-        String myDepart = mEditDepart.getText().toString();
 
         if (myName.trim().equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "Please Enter people name", Toast.LENGTH_SHORT).show();
