@@ -24,6 +24,12 @@
         <activity android:name=".Activity.InformationActivity"
             android:parentActivityName=".Activity.MainActivity"/>
 
+        <activity android:name=".Activity.GroupDeleteActivity"
+            android:parentActivityName=".Activity.GroupListActivity" />
+
+        <activity android:name=".Activity.GroupListActivity"
+            android:parentActivityName=".Activity.MainActivity" />
+
         <provider
             android:name=".DB.ContractProvider"
             android:enabled="true"

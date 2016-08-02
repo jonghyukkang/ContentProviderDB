@@ -2,6 +2,9 @@
     <string name="app_name">ManeullabContracts</string>
     <string name="action_reset">전체 불러오기</string>
 
+    <string name="action_delete">그룹 삭제</string>
+    <string name="action_move">그룹 추가</string>
+
     <string name="companyname">회사명</string>
     <string name="name">이름</string>
     <string name="naesun">내선</string>

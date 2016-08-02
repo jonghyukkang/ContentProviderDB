@@ -45,7 +45,6 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     private EditText mEditDepart;
     private DbHelper mDbHelper;
     ArrayList<String> companyList = new ArrayList<String>();
-//    ArrayList<String> departList = new ArrayList<String>();
     public long id;
 
     public static Dialog_Fragment newInstance(long id) {

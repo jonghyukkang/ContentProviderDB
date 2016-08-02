@@ -16,12 +16,12 @@ public class DbHelper extends SQLiteOpenHelper implements ContractColumns{
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE "+ ContractColumns.TABLE_NAME+" ("+
                 ContractColumns._ID +" INTEGER PRIMARY KEY, " +
-                ContractColumns.COMPANYNAME +" TEXT NOT NULL, " +
-                ContractColumns.NAME +" TEXT NOT NULL, " +
-                ContractColumns.NAESUN +" TEXT NOT NULL, " +
-                ContractColumns.NUMBER +" TEXT NOT NULL, " +
-                ContractColumns.EMAIL +" TEXT NOT NULL, " +
-                ContractColumns.DEPART +" TEXT NOT NULL)");
+                ContractColumns.COMPANYNAME +" TEXT, " +
+                ContractColumns.NAME +" TEXT, " +
+                ContractColumns.NAESUN +" TEXT, " +
+                ContractColumns.NUMBER +" TEXT, " +
+                ContractColumns.EMAIL +" TEXT, " +
+                ContractColumns.DEPART +" TEXT)");
 
         //Manage
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '장준영', '200', '01063283471', 'iron28@maneullab.com','Manage');");
@@ -59,13 +59,34 @@ public class DbHelper extends SQLiteOpenHelper implements ContractColumns{
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '김재민', '777', '01023330305', 'kjm@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '이용현', '707', '0112830931', 'elrobo@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '김성학', '703', '01090536750', 'shkim@maneullab.com','Lab 3');");
+
+
+
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '정국면', '700', '01096561530',  'hitman@maneullab.com','해외법인');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '정정원', '702', '01035005514', 'j21@maneullab.com','해외법인');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '김현민', '701', '01091480784', 'skhm50@maneullab.com','소프트웨어');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '김재민', '777', '01023330305', 'kjm@maneullab.com','소프트웨어');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '이용현', '707', '0112830931', 'elrobo@maneullab.com','하드웨어');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '김성학', '703', '01090536750', 'shkim@maneullab.com','하드웨어');");
+
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '넥슨', '정국면', '700', '01096561530',  'hitman@maneullab.com','게임서버');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '넥슨', '정정원', '702', '01035005514', 'j21@maneullab.com','게임서버');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '넥슨', '김현민', '701', '01091480784', 'skhm50@maneullab.com','엔진관리');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '넥슨', '김재민', '777', '01023330305', 'kjm@maneullab.com','엔진관리');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '넥슨', '이용현', '707', '0112830931', 'elrobo@maneullab.com','경영');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '넥슨', '김성학', '703', '01090536750', 'shkim@maneullab.com','경영');");
+
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '티맥스', '정국면', '700', '01096561530',  'hitman@maneullab.com','운영체제팀');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '티맥스', '정정원', '702', '01035005514', 'j21@maneullab.com','운영체제팀');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '티맥스', '김현민', '701', '01091480784', 'skhm50@maneullab.com','윈도우팀');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '티맥스', '김재민', '777', '01023330305', 'kjm@maneullab.com','윈도우팀');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '티맥스', '이용현', '707', '0112830931', 'elrobo@maneullab.com','하드웨어');");
+        db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '티맥스', '김성학', '703', '01090536750', 'shkim@maneullab.com','하드웨어');");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+ContractColumns.TABLE_NAME);
-
         onCreate(db);
-
     }
 }

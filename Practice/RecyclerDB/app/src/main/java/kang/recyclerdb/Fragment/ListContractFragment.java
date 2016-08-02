@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -18,53 +17,47 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.AutoScrollHelper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import kang.recyclerdb.Activity.GroupListActivity;
 import kang.recyclerdb.Activity.InformationActivity;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.Adapter.ContractCursorAdapter;
 import kang.recyclerdb.DB.DbHelper;
-import kang.recyclerdb.ExpandableListAdapter;
-import kang.recyclerdb.ExpandedMenuModel;
+import kang.recyclerdb.Adapter.ExpandableListAdapter;
+import kang.recyclerdb.ETC.ExpandedMenuModel;
 import kang.recyclerdb.R;
 
 
 public class ListContractFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int ALL_VIEW = 0;
-    private static final int LAB_1 = 1;
-    private static final int LAB_2 = 2;
-    private static final int LAB_3 = 3;
-    private static final int DESIGN = 4;
-    private static final int MANAGE = 5;
+    private static final int NAVI_GROUP_ADD_CODE = 1;
+    private static final int FLOATING_BUTTON_CODE = 3;
+    private static final String ALL = "전체";
 
     private RecyclerView mRecyclerView;
     private ContractCursorAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    public DbHelper mDbHelper;
-
     private DrawerLayout mDrawerLayout;
+
+    DbHelper mDbHelper;
     ExpandableListAdapter mMenuAdapter;
     ExpandableListView expandableList;
-    List<ExpandedMenuModel> listDataHeader = new ArrayList<ExpandedMenuModel>();
-    HashMap<ExpandedMenuModel, List<String>> listDataChild = new HashMap<ExpandedMenuModel, List<String>>();
+    List<ExpandedMenuModel> listDataHeader = new ArrayList<>();
+    HashMap<ExpandedMenuModel, List<String>> listDataChild = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,7 +70,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onClick(View v) {
                 DialogFragment dialogFragment = new Dialog_Fragment();
-                dialogFragment.setTargetFragment(ListContractFragment.this, 3);
+                dialogFragment.setTargetFragment(ListContractFragment.this, FLOATING_BUTTON_CODE);
                 dialogFragment.show(getFragmentManager(), "dialog");
             }
         });
@@ -137,13 +130,16 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
         ImageButton img_btn_groupSetting = (ImageButton) header.findViewById(R.id.img_btn_groupSetting);
+
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
+
         img_btn_groupSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Group Settings", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(),GroupListActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -152,17 +148,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onClick(View v) {
                 DialogFragment dialogFragment = new DialogFrag_GroupAdd();
-                dialogFragment.setTargetFragment(ListContractFragment.this, 1);
-                dialogFragment.show(getFragmentManager(), "dialog");
-            }
-        });
-
-        Button btn_groupDel = (Button) getActivity().findViewById(R.id.btn_groupDel);
-        btn_groupDel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment dialogFragment = new DialogFrag_GroupDel();
-                dialogFragment.setTargetFragment(ListContractFragment.this, 1);
+                dialogFragment.setTargetFragment(ListContractFragment.this, NAVI_GROUP_ADD_CODE);
                 dialogFragment.show(getFragmentManager(), "dialog");
             }
         });
@@ -172,7 +158,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         expandableList.setAdapter(mMenuAdapter);
 
         expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 int gPosition = groupPosition;
@@ -187,7 +172,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 
                 getLoaderManager().restartLoader(cPosition, bundle, ListContractFragment.this);
                 mDrawerLayout.closeDrawers();
-
                 return false;
             }
         });
@@ -204,36 +188,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 return false;
             }
         });
-
-        expandableList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    int groupPosition = ExpandableListView.getPackedPositionGroup(id);
-                    int childPosition = ExpandableListView.getPackedPositionChild(id);
-
-                    String groupName = listDataHeader.get(groupPosition).getIconName();
-
-                    List childList = listDataChild.get(listDataHeader.get(groupPosition));
-                    String childName = (String) childList.get(childPosition);
-
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    String sql = "delete from "+ContractColumns.TABLE_NAME+" where companyname = "+"'"+groupName+"'"+" AND depart = "+ "'"+childName+"'";
-                    db.execSQL(sql);
-                    db.close();
-
-                    listDataChild.clear();
-                    listDataHeader.clear();
-                    prepareListData();
-
-                    expandableList.collapseGroup(groupPosition);
-
-                    return true;
-                }
-                return false;
-            }
-        });
-
     }
 
     @Override
@@ -241,18 +195,18 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         // 그룹 추가시 Navigationview 리셋
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                mMenuAdapter.notifyDataSetChanged();
                 listDataHeader.clear();
                 prepareListData();
+                mMenuAdapter.notifyDataSetChanged();
                 getLoaderManager().restartLoader(ALL_VIEW, null, this);
             }
         }
 
         if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
-                mMenuAdapter.notifyDataSetChanged();
                 listDataHeader.clear();
                 prepareListData();
+                mMenuAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -265,7 +219,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String sql = "SELECT name FROM sqlite_master WHERE type='table'";
         Cursor results = db.rawQuery(sql, null);
-        int i=0;
+        int i = 0;
 
         results.moveToPosition(1);
         while (!results.isAfterLast()) {
@@ -276,6 +230,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             listDataHeader.add(item);
 
             ArrayList<String> result = new ArrayList<>();
+            result.add(ALL);
             Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + tables + "'", null);
             c1.moveToFirst();
             int num = c1.getCount();
@@ -289,9 +244,8 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 }
             }
             c1.close();
-            listDataChild.put(listDataHeader.get(i+1), result);
+            listDataChild.put(listDataHeader.get(i + 1), result);
             i++;
-
             results.moveToNext();
         }
         results.close();
@@ -321,6 +275,10 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         String depart = args.getString("DEPART");
         if (args != null) {
             getActivity().setTitle(company + "   |   " + depart);
+
+            if (id == 0) {
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'", null, ContractColumns.NAME);
+            }
             return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'", null, ContractColumns.NAME);
         }
         return null;

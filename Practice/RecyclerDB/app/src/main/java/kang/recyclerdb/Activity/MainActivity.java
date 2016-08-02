@@ -63,19 +63,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_reset) {
-            Toast.makeText(MainActivity.this, "Reset 기능 입니다", Toast.LENGTH_SHORT).show();
-//            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//            Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-//            for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-//                String[] temp = new String[c.getColumnCount()];
-//                for (int i = 0; i< temp.length; i++){
-//                    temp[i] = c.getString(i);
-//                    db.execSQL("DROP TABLE IF EXISTS "+ temp[i]);
-//                }
-//            }
-//            c.close();
-//            mDbHelper.onCreate(db);
-//            return true;
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            mDbHelper.onUpgrade(db, 1, 2);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -1,8 +1,7 @@
-package kang.recyclerdb;
+package kang.recyclerdb.Adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v7.view.menu.ExpandedMenuView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +13,16 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
 
+import kang.recyclerdb.ETC.ExpandedMenuModel;
+import kang.recyclerdb.R;
+
 /**
  * Created by kangjonghyuk on 2016. 7. 25..
  */
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
-    private Context mContext;
-    private List<ExpandedMenuModel> mListDataHeader; // header titles
 
-    // child data in format of header title, child title
+    private Context mContext;
+    private List<ExpandedMenuModel> mListDataHeader;
     private HashMap<ExpandedMenuModel, List<String>> mListDataChild;
     ExpandableListView expandList;
 
@@ -34,7 +35,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        int i = mListDataHeader.size();
         return this.mListDataHeader.size();
     }
 
@@ -79,11 +79,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ExpandedMenuModel headerTitle = (ExpandedMenuModel) getGroup(groupPosition);
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.listheader, null);
+            convertView = inflater.inflate(R.layout.navi_list_header, null);
         }
         TextView lblListHeader = (TextView) convertView.findViewById(R.id.submenu);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle.getIconName());
+
         return convertView;
     }
 
@@ -93,11 +94,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_submenu, null);
+            convertView = inflater.inflate(R.layout.navi_list_child, null);
         }
-
         TextView txtListChild = (TextView) convertView.findViewById(R.id.submenu);
         txtListChild.setText(childText);
+
         return convertView;
     }
 

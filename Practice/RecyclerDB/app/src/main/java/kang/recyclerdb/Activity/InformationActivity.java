@@ -85,7 +85,11 @@ public class InformationActivity extends AppCompatActivity {
         tvCompany.setText(sCompany);
         tvName.setText(sName);
         tvNaesun.setText(sNaesun);
+        if(sNumber.length()==11)
         tvNumber.setText(sNumber.substring(0, 3) + " - " + sNumber.substring(3, 7) + " - " + sNumber.substring(7, 11));
+        else if(sNumber.length()==10){
+            tvNumber.setText(sNumber.substring(0, 3) + " - " + sNumber.substring(3, 6) + " - " + sNumber.substring(6, 10));
+        }
         tvEmail.setText(sEmail);
         tvDepart.setText(sDepart);
 
