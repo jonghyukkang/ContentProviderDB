@@ -54,7 +54,7 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        this.setTitle("그룹 삭제");
+        this.setTitle("회사/부서 삭제");
 
         mDbHelper = new DbHelper(this);
         mExpandList = (ExpandableListView) findViewById(R.id.expandable_list);
@@ -73,10 +73,10 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
         btn_groupDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(delete_list.size() == 0){
-//                    Toast.makeText(GroupDeleteActivity.this, "삭제 할 목록을 선택해 주세요.", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
+                if(delete_list.size() == 0){
+                    Toast.makeText(GroupDeleteActivity.this, "삭제 할 목록을 선택해 주세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 DialogSimple();
             }
         });

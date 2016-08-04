@@ -31,7 +31,6 @@ import kang.recyclerdb.R;
  */
 public class Dialog_Fragment_Group extends DialogFragment implements DialogInterface.OnClickListener {
 
-
     private DbHelper mDbHelper;
 
     private EditText mEditDepart;
@@ -77,9 +76,9 @@ public class Dialog_Fragment_Group extends DialogFragment implements DialogInter
 
     public void Spinner_Redraw(){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-//        String sql = "SELECT DISTINCT companyname FROM "+ ContractColumns.TABLE_NAME;
-//        Cursor c = db.rawQuery(sql, null);
+//        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        String sql = "SELECT DISTINCT companyname FROM "+ ContractColumns.TABLE_NAME;
+        Cursor c = db.rawQuery(sql, null);
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
             String[] temp = new String[c.getColumnCount()];
             for (int i = 0; i < temp.length; i++) {
@@ -113,39 +112,35 @@ public class Dialog_Fragment_Group extends DialogFragment implements DialogInter
         }
     };
 
-
-
     @Override
     public void onClick(DialogInterface dialog, int which) {
         String myDepart = mEditDepart.getText().toString();
         String myCompany;
 
-        if(mEditCompanygroup.isEnabled()==true){
+        if (mEditCompanygroup.isEnabled() == true) {
             myCompany = mEditCompanygroup.getText().toString();
         } else {
             myCompany = mCompanyList.getSelectedItem().toString();
         }
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        db.execSQL("CREATE TABLE "+ myCompany +" (" +
-                "_ID INTEGER PRIMARY KEY, "+
-                "companyname TEXT NOT NULL, "+
-                "name TEXT NOT NULL, "+
-                "naesun TEXT NOT NULL, "+
-                "number TEXT NOT NULL, "+
-                "email TEXT NOT NULL, "+
-                "depart TEXT NOT NULL)");
+        db.execSQL("INSERT INTO " + ContractColumns.TABLE_NAME + "(companyname, depart) VALUES (" + "'" + myCompany + "', " + "'" + myDepart + "');");
         db.close();
+        listener.completeListener("completeAddCompany");
+    }
+}
 
+//        db.execSQL("CREATE TABLE "+ myCompany +" (" +
+//                "_ID INTEGER PRIMARY KEY, "+
+//                "companyname TEXT NOT NULL, "+
+//                "name TEXT NOT NULL, "+
+//                "naesun TEXT NOT NULL, "+
+//                "number TEXT NOT NULL, "+
+//                "email TEXT NOT NULL, "+
+//                "depart TEXT NOT NULL)");
+//        db.close();
 //        db.execSQL("CREATE TABLE IF NOT EXISTS " + myCompany + " (" +
 //                "_ID INTEGER PRIMARY KEY, " +
 //                "companyname TEXT , " +
 //                "depart TEXT )");
 //        db.execSQL("INSERT INTO " + myCompany + " VALUES (null, " + "'" + myCompany + "', " + "'" + myDepart + "');");
-
-        db.close();
-
-        listener.completeListener("completeAddCompany");
-    }
-}

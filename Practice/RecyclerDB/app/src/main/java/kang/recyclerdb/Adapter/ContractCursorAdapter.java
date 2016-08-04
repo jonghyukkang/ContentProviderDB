@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +94,7 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
         holder.mCompany.setText(company);
         holder.mName.setText(name);
         holder.mDepart.setText(depart);
+
     }
 
 

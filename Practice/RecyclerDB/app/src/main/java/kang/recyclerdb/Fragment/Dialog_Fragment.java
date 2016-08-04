@@ -68,6 +68,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         mEditNumber = (EditText) view.findViewById(R.id.editNumber);
         mEditEmail = (EditText) view.findViewById(R.id.editEmail);
         mEditDepart = (EditText) view.findViewById(R.id.editDepart);
+        mEditName.requestFocus();
         mDbHelper = new DbHelper(getContext());
 
         Spinner_Redraw();

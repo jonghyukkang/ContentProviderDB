@@ -19,6 +19,7 @@ import kang.recyclerdb.Adapter.ExpandableListAdapter;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.DB.DbHelper;
 import kang.recyclerdb.ETC.ExpandedMenuModel;
+import kang.recyclerdb.Fragment.Dialog_Fragment;
 import kang.recyclerdb.Fragment.Dialog_Fragment_Group;
 import kang.recyclerdb.R;
 
@@ -41,7 +42,7 @@ public class GroupListActivity extends AppCompatActivity implements Dialog_Fragm
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        this.setTitle("그룹 편집");
+        this.setTitle("회사 편집");
 
         mDbHelper = new DbHelper(this);
         mExpandList = (ExpandableListView) findViewById(R.id.expandable_list);
@@ -105,7 +106,6 @@ public class GroupListActivity extends AppCompatActivity implements Dialog_Fragm
                 break;
 
             case R.id.action_move:
-
                 Dialog_Fragment_Group newFragment = new Dialog_Fragment_Group();
                 newFragment.show(getSupportFragmentManager(),"hi");
                 break;

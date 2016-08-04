@@ -280,7 +280,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
         if (args == null || id == 1000) {
             getActivity().setTitle("전체 연락처");
-            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, null, null, ContractColumns.NAME);
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "length(name)>0", null, ContractColumns.NAME);
         }
         String company = args.getString("COMPANY");
         String depart = args.getString("DEPART");
@@ -288,11 +288,11 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         if (args != null) {
             getActivity().setTitle(company + "   |   " + depart);
             if (id == 0)
-                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'", null, ContractColumns.NAME);
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" +" AND length(name)>0", null, ContractColumns.NAME);
             if (id == 3471)
                 return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "name = " + "'" + name.trim() + "'", null, ContractColumns.NAME);
 
-            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'", null, ContractColumns.NAME);
+            return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'"+" AND length(name)>0", null, ContractColumns.NAME);
         }
         return null;
     }
