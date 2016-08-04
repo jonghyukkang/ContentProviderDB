@@ -2,7 +2,6 @@ package kang.recyclerdb.View;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import kang.recyclerdb.R;
@@ -20,6 +19,17 @@ public class HolderView extends RecyclerView.ViewHolder {
         mCompany = (TextView) v.findViewById(R.id.tvCompany);
         mName = (TextView) v.findViewById(R.id.tvName);
         mDepart = (TextView) v.findViewById(R.id.tvDepart);
+    }
+    public TextView getmName() {
+        return mName;
+    }
+
+    public TextView getmCompany() {
+        return mCompany;
+    }
+
+    public TextView getmDepart() {
+        return mDepart;
     }
 }
 

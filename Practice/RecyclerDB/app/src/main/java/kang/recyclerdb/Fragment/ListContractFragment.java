@@ -5,9 +5,12 @@ package kang.recyclerdb.Fragment;
  */
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -17,16 +20,21 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +72,8 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment, container, false);
         mDbHelper = new DbHelper(getContext());
+
+        setHasOptionsMenu(true);
 
         // Floating Button을 눌렀을 때  'DialogFragment'띄움
         view.findViewById(R.id.fabAdd).setOnClickListener(new View.OnClickListener() {
@@ -112,6 +122,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 startActivity(intent);
             }
         });
+
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -138,7 +149,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         img_btn_groupSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(),GroupListActivity.class);
+                Intent intent = new Intent(getContext(), GroupListActivity.class);
                 startActivity(intent);
             }
         });
@@ -190,6 +201,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         });
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 그룹 추가시 Navigationview 리셋
@@ -217,21 +229,22 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         listDataHeader.add(itemAll);
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
+//        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
+        String sql = "SELECT DISTINCT companyname FROM " + ContractColumns.TABLE_NAME;
         Cursor results = db.rawQuery(sql, null);
         int i = 0;
 
-        results.moveToPosition(1);
+        results.moveToFirst();
         while (!results.isAfterLast()) {
-            String tables = results.getString(0);
+            String cName = results.getString(0);
 
             ExpandedMenuModel item = new ExpandedMenuModel();
-            item.setIconName(tables);
+            item.setIconName(cName);
             listDataHeader.add(item);
 
             ArrayList<String> result = new ArrayList<>();
             result.add(ALL);
-            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + tables + "'", null);
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'", null);
             c1.moveToFirst();
             int num = c1.getCount();
             for (int j = 0; j < num; j++) {
@@ -249,7 +262,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             results.moveToNext();
         }
         results.close();
-
     }
 
     private void setupDrawerContent(final NavigationView navigationView) {
@@ -263,7 +275,6 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         });
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder
@@ -273,12 +284,14 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         }
         String company = args.getString("COMPANY");
         String depart = args.getString("DEPART");
+        String name = args.getString("QUERY_NAME");
         if (args != null) {
             getActivity().setTitle(company + "   |   " + depart);
-
-            if (id == 0) {
+            if (id == 0)
                 return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'", null, ContractColumns.NAME);
-            }
+            if (id == 3471)
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "name = " + "'" + name.trim() + "'", null, ContractColumns.NAME);
+
             return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'", null, ContractColumns.NAME);
         }
         return null;
@@ -294,7 +307,56 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
     public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.setCursor(null);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setQueryHint(" 이름을 입력하세요 ");
+        searchView.setOnQueryTextListener(queryTextListener);
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    private SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            // 글자를 전부 입력한 후에 변경
+            String query_name = query;
+
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+            Cursor mCount = db.rawQuery("SELECT * FROM "+ ContractColumns.TABLE_NAME +" WHERE name = " +"'"+query.trim()+"'", null);
+            mCount.moveToFirst();
+            int count = mCount.getCount();
+            if(count <= 0){
+                Toast.makeText(getContext(), "검색된 인원이 없습니다.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putString("QUERY_NAME", query_name);
+            getLoaderManager().restartLoader(3471, bundle, ListContractFragment.this);
+
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            // 글자를 입력할 때마다 변경
+            return false;
+        }
+    };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
 }
+
+
 //        String sql = "select * from Contract;";
 //        Cursor results = db.rawQuery(sql, null);
 //

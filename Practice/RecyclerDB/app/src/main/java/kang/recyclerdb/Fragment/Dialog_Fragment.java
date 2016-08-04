@@ -38,6 +38,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     private static final String EXTRA_ID = "id";
     private Spinner mCompanyList;
     private Spinner mDepartList;
+    private EditText mEditCompany;
     private EditText mEditName;
     private EditText mEditNaesun;
     private EditText mEditNumber;
@@ -61,6 +62,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
         mCompanyList = (Spinner) view.findViewById(R.id.spinner_company);
         mDepartList = (Spinner) view.findViewById(R.id.spinner_depart);
+        mEditCompany = (EditText) view.findViewById(R.id.editCompanyGroup);
         mEditName = (EditText) view.findViewById(R.id.editName);
         mEditNaesun = (EditText) view.findViewById(R.id.editNaesun);
         mEditNumber = (EditText) view.findViewById(R.id.editNumber);
@@ -118,8 +120,10 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
     public void Spinner_Redraw(){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-        for (c.moveToPosition(1); !c.isAfterLast(); c.moveToNext()) {
+//        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        String sql = "SELECT DISTINCT companyname FROM "+ ContractColumns.TABLE_NAME;
+        Cursor c = db.rawQuery(sql, null);
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
             String[] temp = new String[c.getColumnCount()];
             for (int i = 0; i < temp.length; i++) {
                 temp[i] = c.getString(i);
@@ -160,9 +164,9 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
             final int inputPosition = mCompanyList.getCount();
             if (mCompanyList.getSelectedItemPosition() == (inputPosition-1)) {
-                DialogFragment dialogFragment = new DialogFrag_GroupAdd();
-                dialogFragment.setTargetFragment(Dialog_Fragment.this, 2);
-                dialogFragment.show(getFragmentManager(), "dialog");
+                mEditCompany.setEnabled(true);
+            } else{
+                mEditCompany.setEnabled(false);
             }
 
             if(mCompanyList.getSelectedItemPosition() == position){
@@ -209,12 +213,20 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     @Override
     public void onClick(DialogInterface dialog, int which) {
         String myDepart;
+        String myCompany;
+
         if(mEditDepart.isEnabled()==true){
             myDepart = mEditDepart.getText().toString();
         } else {
             myDepart = mDepartList.getSelectedItem().toString();
         }
-        String myCompany = mCompanyList.getSelectedItem().toString();
+
+        if(mEditCompany.isEnabled()==true){
+            myCompany = mEditCompany.getText().toString();
+        } else {
+            myCompany = mCompanyList.getSelectedItem().toString();
+        }
+
         String myName = mEditName.getText().toString();
         String myNaesun = mEditNaesun.getText().toString();
         String myNumber = mEditNumber.getText().toString();
@@ -222,18 +234,6 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
 
         if (myName.trim().equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "Please Enter people name", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (myNaesun.trim().equalsIgnoreCase("")) {
-            Toast.makeText(getContext(), "Please Enter people naesun", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (myNumber.trim().equalsIgnoreCase("")) {
-            Toast.makeText(getContext(), "Please Enter people number", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (myEmail.trim().equalsIgnoreCase("")) {
-            Toast.makeText(getContext(), "Please Enter people email", Toast.LENGTH_SHORT).show();
             return;
         }
 

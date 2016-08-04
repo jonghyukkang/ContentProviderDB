@@ -60,8 +60,6 @@ public class DbHelper extends SQLiteOpenHelper implements ContractColumns{
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '이용현', '707', '0112830931', 'elrobo@maneullab.com','Lab 3');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, 'Maneullab', '김성학', '703', '01090536750', 'shkim@maneullab.com','Lab 3');");
 
-
-
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '정국면', '700', '01096561530',  'hitman@maneullab.com','해외법인');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '정정원', '702', '01035005514', 'j21@maneullab.com','해외법인');");
         db.execSQL("INSERT INTO "+ ContractColumns.TABLE_NAME+" VALUES (null, '삼성', '김현민', '701', '01091480784', 'skhm50@maneullab.com','소프트웨어');");

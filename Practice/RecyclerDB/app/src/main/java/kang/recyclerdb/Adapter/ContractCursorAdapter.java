@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import java.util.List;
+
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.View.HolderView;
 import kang.recyclerdb.R;
@@ -93,6 +95,7 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
         holder.mDepart.setText(depart);
     }
 
+
     @Override
     public int getItemCount() {
         return (mCursor != null) ? mCursor.getCount() : 0;
@@ -112,11 +115,11 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
         }
     }
 
-    public Cursor getCursor(){
+    public Cursor getCursor() {
         return mCursor;
     }
 
-    public void setCursor(Cursor newCursor){
+    public void setCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
     }
@@ -125,3 +128,4 @@ public class ContractCursorAdapter extends RecyclerView.Adapter<HolderView> {
         void itemClickListener(Cursor cursor);
     }
 }
+

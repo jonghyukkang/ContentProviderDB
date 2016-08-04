@@ -1,30 +1,24 @@
 package kang.recyclerdb.Activity;
 
 
-import android.app.FragmentManager;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import kang.recyclerdb.Adapter.ExpandableListAdapter;
 import kang.recyclerdb.DB.ContractColumns;
 import kang.recyclerdb.DB.DbHelper;
 import kang.recyclerdb.ETC.ExpandedMenuModel;
-import kang.recyclerdb.Fragment.DialogFrag_GroupDel;
 import kang.recyclerdb.Fragment.Dialog_Fragment_Group;
 import kang.recyclerdb.R;
 
@@ -60,20 +54,21 @@ public class GroupListActivity extends AppCompatActivity implements Dialog_Fragm
 
     public void prepareListData() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
+        String sql = "SELECT DISTINCT companyname FROM "+ ContractColumns.TABLE_NAME;
+//        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
         Cursor results = db.rawQuery(sql, null);
         int i = 0;
 
-        results.moveToPosition(1);
+        results.moveToFirst();
         while (!results.isAfterLast()) {
-            String tables = results.getString(0);
+            String cName = results.getString(0);
 
             ExpandedMenuModel item = new ExpandedMenuModel();
-            item.setIconName(tables);
+            item.setIconName(cName);
             listDataHeader.add(item);
 
             ArrayList<String> result = new ArrayList<>();
-            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + tables + "'", null);
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'", null);
             c1.moveToFirst();
             int num = c1.getCount();
             for (int j = 0; j < num; j++) {

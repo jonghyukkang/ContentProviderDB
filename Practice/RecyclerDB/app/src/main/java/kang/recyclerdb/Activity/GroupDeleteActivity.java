@@ -73,6 +73,10 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
         btn_groupDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if(delete_list.size() == 0){
+//                    Toast.makeText(GroupDeleteActivity.this, "삭제 할 목록을 선택해 주세요.", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 DialogSimple();
             }
         });
@@ -80,7 +84,7 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
 
     private void DialogSimple() {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-        alt_bld.setMessage("삭제하시겠습니까?").setCancelable(false).setPositiveButton("Yes",
+        alt_bld.setMessage("해당 그룹에 속한 연락처가 모두 삭제 됩니다. \n삭제하시겠습니까?").setCancelable(false).setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -90,7 +94,10 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
                                 for (int i = 0; i < delete_group.size(); i++) {
                                     db.execSQL("DROP TABLE IF EXISTS " + delete_group.get(i));
                                     String sql = "delete from " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + delete_group.get(i) + "'";
+                                    String sql1 = "DROP TABLE IF EXISTS "+delete_group.get(i);
+
                                     db.execSQL(sql);
+                                    db.execSQL(sql1);
                                 }
                             }
                             for (int i = 0; i < delete_list.size(); i++) {
@@ -128,20 +135,21 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
 
     public void prepareListData() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
+        String sql = "SELECT DISTINCT companyname FROM "+ ContractColumns.TABLE_NAME;
+//        String sql = "SELECT name FROM sqlite_master WHERE type='table'";
         Cursor results = db.rawQuery(sql, null);
         int i = 0;
 
-        results.moveToPosition(1);
+        results.moveToFirst();
         while (!results.isAfterLast()) {
-            String tables = results.getString(0);
+            String cName = results.getString(0);
 
             ExpandedMenuModel item = new ExpandedMenuModel();
-            item.setIconName(tables);
+            item.setIconName(cName);
             listDataHeader.add(item);
 
             ArrayList<String> result = new ArrayList<>();
-            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + tables + "'", null);
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'", null);
             c1.moveToFirst();
             int num = c1.getCount();
             for (int j = 0; j < num; j++) {

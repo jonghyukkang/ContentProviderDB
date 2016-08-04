@@ -128,7 +128,6 @@
                         android:layout_below="@+id/tvDepart"
                         android:layout_toRightOf="@+id/textView3"
                         android:layout_alignBaseline="@+id/textView3"
-                        android:text="010-5503-3471"
                         android:textSize="16sp"
                         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
