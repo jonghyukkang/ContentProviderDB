@@ -143,7 +143,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
     public void Spinner_Depart(String companyName){
         ArrayList<String> departList = new ArrayList<String>();
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT DISTINCT depart FROM "+ ContractColumns.TABLE_NAME +" where companyname = "+"'"+companyName+"'", null);
+        Cursor c = db.rawQuery("SELECT DISTINCT depart FROM "+ ContractColumns.TABLE_NAME +" where companyname = "+"'"+companyName+"'"+"AND length(depart)>0 ", null);
         for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
             String[] temp = new String[c.getColumnCount()];
             for (int i = 0; i< temp.length; i++){
@@ -234,9 +234,14 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         String myEmail = mEditEmail.getText().toString();
 
         if (myName.trim().equalsIgnoreCase("")) {
-            Toast.makeText(getContext(), "Please Enter people name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "이름을 입력해주세요", Toast.LENGTH_SHORT).show();
             return;
         }
+
+//        if (myDepart.trim().equalsIgnoreCase("")){
+//            Toast.makeText(getContext(), "부서를 입력해주세요", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
         ContentValues values = new ContentValues();
         values.put(ContractColumns.COMPANYNAME, myCompany);
@@ -245,6 +250,7 @@ public class Dialog_Fragment extends DialogFragment implements DialogInterface.O
         values.put(ContractColumns.NUMBER, myNumber);
         values.put(ContractColumns.EMAIL, myEmail);
         values.put(ContractColumns.DEPART, myDepart);
+        values.put(ContractColumns.HOTSEARCH, "no");
 
         // 편집 모드 일땐 update()
         if (id != 0) {

@@ -73,10 +73,10 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
         btn_groupDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(delete_list.size() == 0){
-                    Toast.makeText(GroupDeleteActivity.this, "삭제 할 목록을 선택해 주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if(delete_list.size() == 0){
+//                    Toast.makeText(GroupDeleteActivity.this, "삭제 할 목록을 선택해 주세요.", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 DialogSimple();
             }
         });
@@ -94,10 +94,12 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
                                 for (int i = 0; i < delete_group.size(); i++) {
                                     db.execSQL("DROP TABLE IF EXISTS " + delete_group.get(i));
                                     String sql = "delete from " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + delete_group.get(i) + "'";
+                                    String sql2 = "delete from " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + delete_group.get(i) + "'" + "AND length(depart)>0";
                                     String sql1 = "DROP TABLE IF EXISTS "+delete_group.get(i);
 
                                     db.execSQL(sql);
                                     db.execSQL(sql1);
+                                    db.execSQL(sql2);
                                 }
                             }
                             for (int i = 0; i < delete_list.size(); i++) {
@@ -149,7 +151,7 @@ public class GroupDeleteActivity extends AppCompatActivity implements TotalListe
             listDataHeader.add(item);
 
             ArrayList<String> result = new ArrayList<>();
-            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'", null);
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'"+"AND length(depart)>0", null);
             c1.moveToFirst();
             int num = c1.getCount();
             for (int j = 0; j < num; j++) {

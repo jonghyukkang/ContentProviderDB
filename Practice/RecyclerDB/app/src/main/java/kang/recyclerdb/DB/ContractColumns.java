@@ -17,5 +17,7 @@ public interface ContractColumns extends BaseColumns {
     String NUMBER = "number";
     String EMAIL = "email";
     String DEPART = "depart";
+    String PRO_IMAGE = "pro_image";
+    String HOTSEARCH = "hotsearch";
 
 }

@@ -69,7 +69,7 @@ public class GroupListActivity extends AppCompatActivity implements Dialog_Fragm
             listDataHeader.add(item);
 
             ArrayList<String> result = new ArrayList<>();
-            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'", null);
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'"+"AND length(depart)>0", null);
             c1.moveToFirst();
             int num = c1.getCount();
             for (int j = 0; j < num; j++) {

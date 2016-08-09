@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="40dp"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="175dp"
             android:background="@android:color/white" />
 
         <LinearLayout
@@ -33,13 +33,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_groupAdd"
+                android:id="@+id/btn_hotSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center_horizontal"
                 android:background="@color/colorPurpleLess"
-                android:text="그룹 추가" />
+                android:textColor="#ffffff"
+                android:text="즐겨찾기" />
 
         </LinearLayout>
     </android.support.design.widget.NavigationView>

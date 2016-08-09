@@ -52,7 +52,6 @@ import kang.recyclerdb.R;
 
 public class ListContractFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int ALL_VIEW = 0;
-    private static final int NAVI_GROUP_ADD_CODE = 1;
     private static final int FLOATING_BUTTON_CODE = 3;
     private static final String ALL = "전체";
 
@@ -101,6 +100,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 int idx_number = cursor.getColumnIndex(ContractColumns.NUMBER);
                 int idx_email = cursor.getColumnIndex(ContractColumns.EMAIL);
                 int idx_depart = cursor.getColumnIndex(ContractColumns.DEPART);
+                int idx_hotsearch = cursor.getColumnIndex(ContractColumns.HOTSEARCH);
 
                 String id = cursor.getString(idx_id);
                 String company = cursor.getString(idx_company);
@@ -109,6 +109,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 String number = cursor.getString(idx_number);
                 String email = cursor.getString(idx_email);
                 String depart = cursor.getString(idx_depart);
+                String hotsearch = cursor.getString(idx_hotsearch);
 
                 Intent intent = new Intent(getContext(), InformationActivity.class);
                 intent.putExtra("ID", id);
@@ -118,6 +119,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
                 intent.putExtra("NUMBER", number);
                 intent.putExtra("EMAIL", email);
                 intent.putExtra("DEPART", depart);
+                intent.putExtra("HOTSEARCH", hotsearch);
 
                 startActivity(intent);
             }
@@ -140,7 +142,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
-        ImageButton img_btn_groupSetting = (ImageButton) header.findViewById(R.id.img_btn_groupSetting);
+        Button img_btn_groupSetting = (Button) header.findViewById(R.id.img_btn_groupSetting);
 
         if (navigationView != null) {
             setupDrawerContent(navigationView);
@@ -154,13 +156,15 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
             }
         });
 
-        Button btn_groupAdd = (Button) getActivity().findViewById(R.id.btn_groupAdd);
-        btn_groupAdd.setOnClickListener(new View.OnClickListener() {
+        Button btn_hotSearch = (Button) getActivity().findViewById(R.id.btn_hotSearch);
+        btn_hotSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment dialogFragment = new DialogFrag_GroupAdd();
-                dialogFragment.setTargetFragment(ListContractFragment.this, NAVI_GROUP_ADD_CODE);
-                dialogFragment.show(getFragmentManager(), "dialog");
+                String query_hot = "yes";
+                Bundle bundle = new Bundle();
+                bundle.putString("HOT_SEARCH", query_hot);
+                getLoaderManager().restartLoader(9000, bundle, ListContractFragment.this);
+                mDrawerLayout.closeDrawers();
             }
         });
 
@@ -244,7 +248,7 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
 
             ArrayList<String> result = new ArrayList<>();
             result.add(ALL);
-            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'", null);
+            Cursor c1 = db.rawQuery("SELECT DISTINCT depart FROM " + ContractColumns.TABLE_NAME + " where companyname = " + "'" + cName + "'" + "AND length(depart)>0", null);
             c1.moveToFirst();
             int num = c1.getCount();
             for (int j = 0; j < num; j++) {
@@ -285,13 +289,17 @@ public class ListContractFragment extends Fragment implements LoaderManager.Load
         String company = args.getString("COMPANY");
         String depart = args.getString("DEPART");
         String name = args.getString("QUERY_NAME");
+        String hotsearch = args.getString("HOT_SEARCH");
         if (args != null) {
             getActivity().setTitle(company + "   |   " + depart);
             if (id == 0)
                 return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" +" AND length(name)>0", null, ContractColumns.NAME);
             if (id == 3471)
                 return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "name = " + "'" + name.trim() + "'", null, ContractColumns.NAME);
-
+            if (id == 9000) {
+                getActivity().setTitle("즐겨찾기");
+                return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "hotsearch = " + "'" + hotsearch + "'", null, ContractColumns.NAME);
+            }
             return new CursorLoader(getActivity(), ContractColumns.URI_MENSAGENS, null, "companyname = " + "'" + company + "'" + " AND depart = " + "'" + depart + "'"+" AND length(name)>0", null, ContractColumns.NAME);
         }
         return null;

@@ -74,10 +74,10 @@ public class Dialog_Fragment_Group extends DialogFragment implements DialogInter
                 .create();
     }
 
-    public void Spinner_Redraw(){
+    public void Spinner_Redraw() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 //        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-        String sql = "SELECT DISTINCT companyname FROM "+ ContractColumns.TABLE_NAME;
+        String sql = "SELECT DISTINCT companyname FROM " + ContractColumns.TABLE_NAME;
         Cursor c = db.rawQuery(sql, null);
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
             String[] temp = new String[c.getColumnCount()];
@@ -99,9 +99,9 @@ public class Dialog_Fragment_Group extends DialogFragment implements DialogInter
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
             final int inputPosition = mCompanyList.getCount();
-            if (mCompanyList.getSelectedItemPosition() == (inputPosition-1)) {
+            if (mCompanyList.getSelectedItemPosition() == (inputPosition - 1)) {
                 mEditCompanygroup.setEnabled(true);
-            } else{
+            } else {
                 mEditCompanygroup.setEnabled(false);
             }
         }
@@ -126,6 +126,7 @@ public class Dialog_Fragment_Group extends DialogFragment implements DialogInter
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.execSQL("INSERT INTO " + ContractColumns.TABLE_NAME + "(companyname, depart) VALUES (" + "'" + myCompany + "', " + "'" + myDepart + "');");
         db.close();
+
         listener.completeListener("completeAddCompany");
     }
 }

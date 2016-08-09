@@ -2,45 +2,21 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="@drawable/side_nav_bar"
-    android:gravity="bottom"
+    android:layout_height="180dp"
+    android:background="@drawable/maneullab_main"
     android:orientation="vertical"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:paddingTop="10dp"
-        android:src="@android:drawable/sym_def_app_icon" />
 
-    <TextView
-        android:id="@+id/userName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
-        android:text="Kang jong hyuk"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userName"
-        android:text="kangjh@maneullab.com" />
-
-    <ImageButton
+    <Button
         android:id="@+id/img_btn_groupSetting"
-        android:layout_width="40dp"
+        android:layout_width="60dp"
         android:layout_height="40dp"
-        android:src="@drawable/icon_setting"
+        android:drawableLeft="@drawable/icon_setting"
         android:background="@null"
-        android:layout_alignTop="@+id/userName"
-        android:layout_alignEnd="@+id/userName" />
-
+        android:text="설정"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
